@@ -5,11 +5,22 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-        <Text>Changes you make will automatically reload.</Text>
+       <Intro/>
         <Text>Shake your phone to open the developer menu.</Text>
       </View>
     );
+  }
+}
+
+// Test component for getting started
+export class Intro extends React.Component {
+  render(){
+    return (
+      <View style = {styles.container}>
+       <Text>Welcome to the Bloom Prototype</Text>
+        <Text> Focus for 60s:</Text>
+      </View>
+      );
   }
 }
 
