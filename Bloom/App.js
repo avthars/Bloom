@@ -17,11 +17,26 @@ export default class App extends React.Component {
 
 
 export class SessionButton extends React.Component {
+  state = {
+    toggle : false
+  }
+
+  _onPress() {
+    const newState = !this.state.toggle;
+    this.setState({toggle: newState})
+
+  }
+
   render(){
+    const {toggle} = this.state;
+    const textValue = toggle?"ACTIVE SESSION":"INACTIVE SESSION";
     return (
           <View style = {{flexDirection: 'row'}}>
-            <TouchableOpacity style = {styles.sessionButton}>
-              <Text style = {{color: 'white', textAlign: 'center', fontSize: 16, }}> START </Text>
+            <TouchableOpacity 
+            style = {styles.sessionButton}
+            onPress = {()=> this._onPress()}
+            >
+              <Text style = {{color: 'white', textAlign: 'center', fontSize: 16, }}> {textValue} </Text>
             </TouchableOpacity>
           </View>
       );
