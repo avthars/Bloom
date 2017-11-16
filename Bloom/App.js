@@ -21,7 +21,7 @@ export default class App extends React.Component {
 
 
 //App state
-class AppStateExample extends React.Component {
+export class AppStateTing extends React.Component {
 
   state = {
     appState: AppState.currentState
@@ -37,27 +37,21 @@ class AppStateExample extends React.Component {
 
   _handleAppStateChange = (nextAppState) => {
     
+    //transition from active to background
     if (this.state.appState.match(/active/) && nextAppState === 'background') {
       console.log('App is in the background! User is distracted :( ')
     }
+    //transition from background/inactive to active
     else if (this.state.appState.match(/background|inactive/) && nextAppState === 'active'){
       console.log('App is in the foreground. User is focusing :) ')
     }
-
-    //if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
-    //  console.log('App has come to the foreground! User is focusing!')
-    //}
-
-    //else if (this.state.appState.match(/background/) ) {
-    //  console.log('App is in the background! User is distracted!')
-    //}
 
     this.setState({appState: nextAppState});
   }
 
   render() {
     return (
-      <Text>Current state is: {this.state.appState}</Text>
+      <Text>Bloom current state: {this.state.appState}</Text>
     );
   }
 
@@ -141,7 +135,7 @@ export class Intro extends React.Component {
         <Text> I want to focus on: </Text>
         <TextInput style = {styles.taskInput} placeholder = "What do you want to focus on?" />
         <SessionButton/>
-        <AppStateExample/>
+        <AppStateTing/>
         <SendSMSButton/>
       </View>
       );
