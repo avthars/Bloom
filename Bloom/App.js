@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, 
+import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, AppState
 
 } from 'react-native';
 
@@ -19,6 +19,46 @@ export default class App extends React.Component {
   }
 }
 
+
+//App state
+class AppStateExample extends React.Component {
+
+  state = {
+    appState: AppState.currentState
+  }
+
+  componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  _handleAppStateChange = (nextAppState) => {
+    
+    if (this.state.appState.match(/inactive|background/)) {
+      console.log('App is in the background! User is distracted!')
+    }
+
+    //if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+    //  console.log('App has come to the foreground! User is focusing!')
+    //}
+
+    //else if (this.state.appState.match(/background/) ) {
+    //  console.log('App is in the background! User is distracted!')
+    //}
+
+    this.setState({appState: nextAppState});
+  }
+
+  render() {
+    return (
+      <Text>Current state is: {this.state.appState}</Text>
+    );
+  }
+
+}
 
 //Button which starts and stops a session
 export class SendSMSButton extends React.Component {
@@ -98,6 +138,7 @@ export class Intro extends React.Component {
         <Text> I want to focus on: </Text>
         <TextInput style = {styles.taskInput} placeholder = "What do you want to focus on?" />
         <SessionButton/>
+        <AppStateExample/>
         <SendSMSButton/>
       </View>
       );
