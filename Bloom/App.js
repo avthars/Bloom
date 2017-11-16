@@ -19,6 +19,30 @@ export default class App extends React.Component {
   }
 }
 
+// Initial version of Timer
+class TimerDraft extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      time:60
+    };
+
+    // Toggle the state every second
+    setInterval(() => {
+      this.setState(previousState => {
+        return { time: previousState.time - 1};
+      });
+    }, 1000);
+  }
+
+  render() {
+    let display = this.state.time;
+    return (
+      <Text>{display}</Text>
+    );
+  }
+}
+
 
 //App state
 export class AppStateTing extends React.Component {
@@ -136,6 +160,7 @@ export class Intro extends React.Component {
         <TextInput style = {styles.taskInput} placeholder = "What do you want to focus on?" />
         <SessionButton/>
         <AppStateTing/>
+        <TimerDraft/>
         <SendSMSButton/>
       </View>
       );
