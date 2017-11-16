@@ -24,7 +24,7 @@ class TimerDraft extends React.Component {
       time:0
     };
 
-    // Toggle the state every second
+    //Count up to 100 + restart
     setInterval(() => {
       this.setState(previousState => 
       {
@@ -80,7 +80,7 @@ export class AppStateTing extends React.Component {
 
   render() {
     return (
-      <Text style = {{fontSize: 16, color: 'white'}}>current state: {this.state.appState}</Text>
+      <Text style = {{fontSize: 16, color: 'white'}}>current App state: {this.state.appState}</Text>
     );
   }
 
@@ -169,25 +169,23 @@ export class Intro extends React.Component {
     return (
       <View style = {styles.container}>
       <Text style = {styles.head}> Bloom </Text>
-      <Text></Text>
+      <TextInput style = {styles.taskInput} placeholder = "What do you want to focus on?" />
+
       <Image 
         style={{width: 400, height: 400}}
-        source={require('./bloom.png')} />
-      <Text></Text>
-      <Text></Text>
-
-      <TextInput style = {styles.taskInput} placeholder = "What do you want to focus on?" />
+        source={require('./bloom.png')} />      
       
       <Text style = {styles.whiteText}>
-      focus for {this.state.time} minutes
+      Focus for {this.state.time} minutes
       </Text>
-      
+
       <Slider
             style={{ width: 300 }}
             step={5}
             minimumValue={5}
             maximumValue={120}
             value={this.state.time}
+            //thumbTouchSize={width: 80, height: 80}
             onValueChange={val => this.setState({ time: val })}
             />
             
@@ -219,7 +217,7 @@ const styles = StyleSheet.create({
   },
   
   whiteText: {
-    fontSize: 12,
+    fontSize: 16,
     textAlign: 'center',
     color: '#fff',
     justifyContent: 'space-between',
@@ -251,6 +249,8 @@ const styles = StyleSheet.create({
     borderRadius: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    fontSize: 16,
+    textAlign: 'center',
   },
 
 });
