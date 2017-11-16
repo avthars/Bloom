@@ -29,16 +29,24 @@ class TimerDraft extends React.Component {
 
     // Toggle the state every second
     setInterval(() => {
-      this.setState(previousState => {
-        return { time: previousState.time - 1};
+      this.setState(previousState => 
+      {
+       
+       if (previousState.time == 0){
+        return {time: 60};
+       }
+       else{
+        return {time: previousState.time - 1};
+       }
       });
+
     }, 1000);
   }
 
   render() {
     let display = this.state.time;
     return (
-      <Text>{display}</Text>
+      <Text style = {{fontSize: 30}}> Time left: {display}s</Text>
     );
   }
 }
@@ -75,7 +83,7 @@ export class AppStateTing extends React.Component {
 
   render() {
     return (
-      <Text>Bloom current state: {this.state.appState}</Text>
+      <Text style = {{fontSize: 16}}>Bloom current state: {this.state.appState}</Text>
     );
   }
 
@@ -155,7 +163,9 @@ export class Intro extends React.Component {
       <View style = {styles.container}>
 
        <Text>Welcome to the Bloom Prototype</Text>
+        <Text></Text>
         <Text> Focus for 60s:</Text>
+        <Text></Text>
         <Text> I want to focus on: </Text>
         <TextInput style = {styles.taskInput} placeholder = "What do you want to focus on?" />
         <SessionButton/>
