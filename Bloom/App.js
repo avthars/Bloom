@@ -1,6 +1,35 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, AppState, Slider} from 'react-native';
 
+//local database
+//var db = require('react-native-sqlite3');
+
+// sends request to server to put flower in database
+// sample usage: putFlower('xxxxx', 'tigerlily', 'true');
+function putFlower(id, variety, complete) {
+  var API = Platform.OS === 'android'
+  ? 'http://10.9.9.30:55555/v1/flowers'
+  : 'http://localhost:55555/v1/flowers';
+
+  fetch(API, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      id: id,
+      variety: variety,
+      complete: complete,
+      time: Date.now()
+    })
+  })
+  .then((res) => res.json())
+  .catch((err) => {
+    console.error(err);
+  });
+}
+
 //require twilio from local
 //const twilio = require('./twilio');
 
