@@ -1,7 +1,5 @@
-import React from 'react';
-import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, AppState
-
-} from 'react-native';
+import React, { Component } from 'react';
+import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, AppState, Slider} from 'react-native';
 
 //require twilio from local
 //const twilio = require('./twilio');
@@ -13,7 +11,6 @@ export default class App extends React.Component {
     return (
       <View style={styles.container}>
        <Intro/>
-        <Text>Shake your phone to open the developer menu.</Text>
       </View>
     );
   }
@@ -24,7 +21,7 @@ class TimerDraft extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      time:60
+      time:0
     };
 
     // Toggle the state every second
@@ -32,11 +29,11 @@ class TimerDraft extends React.Component {
       this.setState(previousState => 
       {
        
-       if (previousState.time == 0){
-        return {time: 60};
+       if (previousState.time == 100){
+        return {time: 0};
        }
        else{
-        return {time: previousState.time - 1};
+        return {time: previousState.time + 1};
        }
       });
 
@@ -46,7 +43,7 @@ class TimerDraft extends React.Component {
   render() {
     let display = this.state.time;
     return (
-      <Text style = {{fontSize: 30}}> Time left: {display}s</Text>
+      <Text style = {{fontSize: 30, color: 'white'}}> {display} seconds focused</Text>
     );
   }
 }
@@ -83,7 +80,7 @@ export class AppStateTing extends React.Component {
 
   render() {
     return (
-      <Text style = {{fontSize: 16}}>Bloom current state: {this.state.appState}</Text>
+      <Text style = {{fontSize: 16, color: 'white'}}>current state: {this.state.appState}</Text>
     );
   }
 
@@ -142,7 +139,7 @@ export class SessionButton extends React.Component {
 
   render(){
     const {toggle} = this.state;
-    const textValue = toggle?"ACTIVE SESSION":"INACTIVE SESSION";
+    const textValue = toggle?"STOP":"START";
     return (
           <View style = {{flexDirection: 'row'}}>
             <TouchableOpacity 
@@ -158,20 +155,46 @@ export class SessionButton extends React.Component {
 
 // Test component for getting started
 export class Intro extends React.Component {
+  
+  constructor(props) {
+  super(props)
+  this.state = { time: 60 }
+  } 
+  getTime(val){
+  console.warn(val);
+  }   
+ 
+  
   render(){
     return (
       <View style = {styles.container}>
+      <Text style = {styles.head}> Bloom </Text>
+      <Text></Text>
+      <Image 
+        style={{width: 400, height: 400}}
+        source={require('./bloom.png')} />
+      <Text></Text>
+      <Text></Text>
 
-       <Text>Welcome to the Bloom Prototype</Text>
-        <Text></Text>
-        <Text> Focus for 60s:</Text>
-        <Text></Text>
-        <Text> I want to focus on: </Text>
-        <TextInput style = {styles.taskInput} placeholder = "What do you want to focus on?" />
-        <SessionButton/>
-        <AppStateTing/>
-        <TimerDraft/>
-        <SendSMSButton/>
+      <TextInput style = {styles.taskInput} placeholder = "What do you want to focus on?" />
+      
+      <Text style = {styles.whiteText}>
+      focus for {this.state.time} minutes
+      </Text>
+      
+      <Slider
+            style={{ width: 300 }}
+            step={5}
+            minimumValue={5}
+            maximumValue={120}
+            value={this.state.time}
+            onValueChange={val => this.setState({ time: val })}
+            />
+            
+      <SessionButton/>
+      <AppStateTing/>
+      <TimerDraft/>
+      {/* <SendSMSButton/> */}
       </View>
       );
   }
@@ -181,17 +204,33 @@ export class Intro extends React.Component {
 
 
 const styles = StyleSheet.create({
+  head: {
+    fontSize: 40,
+    textAlign: 'center',
+    color: '#fff',
+    marginTop: 20,
+    justifyContent: 'space-between',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#000',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  
+  whiteText: {
+    fontSize: 12,
+    textAlign: 'center',
+    color: '#fff',
+    justifyContent: 'space-between',
+  },
+
 
   sessionButton: {
     margin: 10,
-    backgroundColor: 'blue',
-    flex: 1,
+    backgroundColor: '#c0392b',
+    borderRadius: 15,
+    flex: .5,
     height: 60,
     justifyContent: 'center',
   },
@@ -208,7 +247,7 @@ const styles = StyleSheet.create({
     height: 40,
     width: 250,
     borderWidth: 0,
-    color: 'black',
+    color: 'white',
     borderRadius: 1,
     justifyContent: 'center',
     alignItems: 'center',
