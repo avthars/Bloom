@@ -37,8 +37,11 @@ class AppStateExample extends React.Component {
 
   _handleAppStateChange = (nextAppState) => {
     
-    if (this.state.appState.match(/inactive|background/)) {
-      console.log('App is in the background! User is distracted!')
+    if (this.state.appState.match(/active/) && nextAppState === 'background') {
+      console.log('App is in the background! User is distracted :( ')
+    }
+    else if (this.state.appState.match(/background|inactive/) && nextAppState === 'active'){
+      console.log('App is in the foreground. User is focusing :) ')
     }
 
     //if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
