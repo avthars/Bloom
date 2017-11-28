@@ -57,25 +57,28 @@ class TimerDraft extends React.Component {
       elapsedTime: 0
     };
 
-    //Count up to 100 + restart
+    //count up to target time + then stop
+    //interval for rerendering component
     setInterval(() => {
       this.setState(previousState => 
       {
-       if (previousState.elapsedTime != previousState.targetTime){
-        return {elapsedTime: previousState.elapsedTime+1};
+      //continue if not yet reached target and session is active
+       if ((previousState.elapsedTime != this.props.targetTime) && this.props.inSession){
+        return {elapsedTime: previousState.elapsedTime +1};
        }
-       else{
+       //stop if reached target and session is active
+       else if (this.props.inSession){
         return {elapsedTime: this.state.targetTime};
        }
       });
-
-    }, 1000);
+    
+    }, 1000);  
+  
   }
 
   render() {
-    let display = this.state.elapsedTime;
     return (
-      <Text style = {{fontSize: 30, color: 'white'}}> {display} seconds focused</Text>
+      <Text style = {{fontSize: 30, color: 'white'}}> {this.state.elapsedTime} seconds focused</Text>
     );
   }
 }
@@ -226,7 +229,10 @@ _handleSession = (pressed) => {
       handleSession = {this._handleSession}
       />
       <Text style = {styles.whiteText}> In Session = {this.state.inSession ? 'ACTIVE':'INACTIVE'} </Text>
-      <TimerDraft targetTime = {this.state.selectedTime}/>
+      <TimerDraft 
+      inSession = {this.props.inSession} 
+      targetTime = {this.state.selectedTime*60}/>
+      
       </View>
       );
   }
