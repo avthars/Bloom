@@ -33,13 +33,16 @@ function putFlower(id, variety, complete) {
 //require twilio from local
 //const twilio = require('./twilio');
 
-
-//App
+//Main App Component
+//containts main app state
 export default class App extends React.Component {
+  constructor(props){
+    super(props);
+  }
   render() {
     return (
       <View style={styles.container}>
-       <Intro/>
+       <TimerScreen/>
       </View>
     );
   }
@@ -50,19 +53,19 @@ class TimerDraft extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      time:0
+      targetTime: this.props.targetTime,
+      elapsedTime: 0
     };
 
     //Count up to 100 + restart
     setInterval(() => {
       this.setState(previousState => 
       {
-       
-       if (previousState.time == 100){
-        return {time: 0};
+       if (previousState.elapsedTime != previousState.targetTime){
+        return {elapsedTime: previousState.elapsedTime+1};
        }
        else{
-        return {time: previousState.time + 1};
+        return {elapsedTime: this.state.targetTime};
        }
       });
 
@@ -70,52 +73,14 @@ class TimerDraft extends React.Component {
   }
 
   render() {
-    let display = this.state.time;
+    let display = this.state.elapsedTime;
     return (
       <Text style = {{fontSize: 30, color: 'white'}}> {display} seconds focused</Text>
     );
   }
 }
 
-
-//App state
-export class AppStateTing extends React.Component {
-
-  state = {
-    appState: AppState.currentState
-  }
-
-  componentDidMount() {
-    AppState.addEventListener('change', this._handleAppStateChange);
-  }
-
-  componentWillUnmount() {
-    AppState.removeEventListener('change', this._handleAppStateChange);
-  }
-
-  _handleAppStateChange = (nextAppState) => {
-    
-    //transition from active to background
-    if (this.state.appState.match(/active/) && nextAppState === 'background') {
-      console.log('App is in the background! User is distracted :( ')
-    }
-    //transition from background/inactive to active
-    else if (this.state.appState.match(/background|inactive/) && nextAppState === 'active'){
-      console.log('App is in the foreground. User is focusing :) ')
-    }
-
-    this.setState({appState: nextAppState});
-  }
-
-  render() {
-    return (
-      <Text style = {{fontSize: 16, color: 'white'}}>current App state: {this.state.appState}</Text>
-    );
-  }
-
-}
-
-//Button which starts and stops a session
+//Button which sends SMS to accountability buddy
 export class SendSMSButton extends React.Component {
   state = {
     toggle : false
@@ -160,10 +125,13 @@ export class SessionButton extends React.Component {
     toggle : false
   }
 
+  //Start new session or end current session when button is pressed
   _onPress() {
     const newState = !this.state.toggle;
+
     this.setState({toggle: newState})
 
+    this.props.handleSession(newState);
   }
 
   render(){
@@ -183,17 +151,53 @@ export class SessionButton extends React.Component {
 }
 
 // Test component for getting started
-export class Intro extends React.Component {
-  
+export class TimerScreen extends React.Component {
   constructor(props) {
   super(props)
-  this.state = { time: 60 }
-  } 
-  getTime(val){
-  console.warn(val);
-  }   
- 
+  this.state = 
+  { selectedTime: 1,
+    appState: AppState.currentState,
+    inSession: false}
+  }; 
+
+  componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  _handleAppStateChange = (nextAppState) => {
   
+  //transition from active to background iff session is active
+  if ((this.state.appState.match(/active/) && nextAppState === 'background') && this.state.inSession)
+  {
+    console.log('App is in the background! User is distracted :( ')
+  }
+  //transition from background/inactive to active iff session is active
+  else if ((this.state.appState.match(/background|inactive/) && nextAppState === 'active')&& this.state.inSession)
+  {
+    console.log('App is in the foreground. User is focusing :) ')
+  }
+
+  this.setState({appState: nextAppState});
+}
+
+//functions to start/end session when START/STOP button is pressed
+_handleSession = (pressed) => {
+
+  //console.log('In Parent function');
+
+  if (pressed) {
+    this.setState({inSession: true,});
+  }
+  else{
+    this.setState({inSession: false,});
+  }
+
+}
+
   render(){
     return (
       <View style = {styles.container}>
@@ -205,23 +209,24 @@ export class Intro extends React.Component {
         source={require('./bloom.png')} />      
       
       <Text style = {styles.whiteText}>
-      Focus for {this.state.time} minutes
+      Focus for {this.state.selectedTime} minutes
       </Text>
 
       <Slider
             style={{ width: 300 }}
-            step={5}
-            minimumValue={5}
-            maximumValue={120}
-            value={this.state.time}
+            step={0.5}
+            minimumValue={0.5}
+            maximumValue={5}
+            value={this.state.selectedTime}
             //thumbTouchSize={width: 80, height: 80}
-            onValueChange={val => this.setState({ time: val })}
+            onValueChange={val => this.setState({selectedTime: val })}
             />
             
-      <SessionButton/>
-      <AppStateTing/>
-      <TimerDraft/>
-      {/* <SendSMSButton/> */}
+      <SessionButton 
+      handleSession = {this._handleSession}
+      />
+      <Text style = {styles.whiteText}> In Session = {this.state.inSession ? 'ACTIVE':'INACTIVE'} </Text>
+      <TimerDraft targetTime = {this.state.selectedTime}/>
       </View>
       );
   }
