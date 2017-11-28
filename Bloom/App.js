@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, AppState, Slider} from 'react-native';
-
+import ApiUtils from './api-utils.js';
 //local database
 //var db = require('react-native-sqlite3');
 
@@ -29,9 +29,6 @@ function putFlower(id, variety, complete) {
     console.error(err);
   });
 }
-
-//require twilio from local
-//const twilio = require('./twilio');
 
 //Main App Component
 //containts main app state
@@ -69,6 +66,8 @@ class TimerDraft extends React.Component {
        }
        //stop if reached target and session is active
        else {
+        //call session complete function
+        //this.props.sessionComplete(true)
         return {elapsedTime: this.state.targetTime};
        }
       });
@@ -89,40 +88,76 @@ class TimerDraft extends React.Component {
 }
 
 //Button which sends SMS to accountability buddy
-export class SendSMSButton extends React.Component {
-  state = {
-    toggle : false
+export class SMSButton extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      toggle: false
+    }
   }
 
+    _sendSMS = () => {
+      console.log('in sendSMS');
+      let url = 'https://api.twilio.com/2010-04-01/Accounts/AC40ca87d3e6fdbd696c8b8d64df59a1e0/Messages.json';
+    
+      let accountSid = 'AC40ca87d3e6fdbd696c8b8d64df59a1e0';
+      //auth token
+      let  authToken = 'df6d2772765f6643a865a51ea66de470';
+    
+      let accountabilityBuddyPhoneNo = '+16093563125';
+      let bloomPhoneNo = '+17325888245';
+      let body = "Bloom: Test message. Yay";
+    
+      let encodedToPhone = encodeURIComponent(accountabilityBuddyPhoneNo);
+      let encodedFromPhone = encodeURIComponent(bloomPhoneNo);
+      let encodedBody = encodeURIComponent(body);
+
+      console.log('about to fetch');
+    
+      var Api = {
+        sendSms: function(){
+          return(
+            fetch(url, {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+              to: {encodedFromPhone},
+              from: {encodedToPhone},
+              body: {encodedBody},
+              user: {accountSid:authToken}
+              })
+            })
+            .then(ApiUtils.checkStatus)
+            .then(response => response.json())
+            .catch(e => {console.log(e);})
+          );
+        }
+      }
+    }
+
   _onPress() {
-    //const newState = !this.state.toggle;
-    const newState = true;
-
-    //twilio.messages.create({
-    //  body: 'Bloom: Jerry has succeeded in his 60min focus session',
-      //Hard coded Avthar's number
-    //  to: '+16093563125',
-      //Twilio number given
-    //  from: '+17325888245',
-
-    //})
-
+    //change state
+    const newState = !this.state.toggle;
     this.setState({toggle: newState})
 
+    //call send message function
+    this._sendSMS();
   }
 
   render(){
     const {toggle} = this.state;
     const textValue = toggle?"SMS Sent":"Send SMS";
     return (
-          <View style = {{flexDirection: 'row'}}>
+            <View style = {{flexDirection: 'row'}}>
             <TouchableOpacity 
             style = {styles.sessionButton}
-            onPress = {()=> this._onPress()}
-            >
-              <Text style = {{color: 'white', textAlign: 'center', fontSize: 16, }}> {textValue} </Text>
+            onPress = {()=> this._onPress()}>
+            <Text style = {{color: 'white', textAlign: 'center', fontSize: 16, }}> {textValue} </Text>
             </TouchableOpacity>
-          </View>
+            </View>
       );
   }
 }
@@ -165,7 +200,9 @@ export class TimerScreen extends React.Component {
   this.state = 
   { selectedTime: 1,
     appState: AppState.currentState,
-    inSession: false}
+    inSession: false,
+    sessionTask: ''
+  }
   }; 
 
   //functions for internal App state
@@ -202,6 +239,19 @@ _handleSession = (pressed) => {
   }
 }
 
+//function to make HTTP Post Request to Twilio
+
+//Capture and save task associated with session
+_onTextChange = (task) => {
+  //console.log(task);
+  this.setState({sessionTask: task});
+}
+
+//After user has finished editing input, take final state
+_onEndInput = () => {
+  console.log(this.state.sessionTask);
+}
+
   render(){
 
     //conditionally render time elapsed in session
@@ -216,8 +266,12 @@ _handleSession = (pressed) => {
     return (
       <View style = {styles.container}>
       <Text style = {styles.head}> Bloom </Text>
-      <TextInput style = {styles.taskInput} placeholder = "What do you want to focus on?" />
-
+      <TextInput 
+      style = {styles.taskInput} 
+      placeholder = "What do you want to focus on?"
+      onChangeText = {this._onTextChange}
+      onEndEditing = {this._onEndInput}
+      />
       <Image 
         style={{width: 400, height: 400}}
         source={require('./bloom.png')} />      
@@ -235,7 +289,7 @@ _handleSession = (pressed) => {
             //thumbTouchSize={width: 80, height: 80}
             onValueChange={val => this.setState({selectedTime: val })}
             />
-            
+      
       <SessionButton 
       handleSession = {this._handleSession}
       />
