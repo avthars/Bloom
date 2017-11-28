@@ -59,21 +59,26 @@ class TimerDraft extends React.Component {
 
     //count up to target time + then stop
     //interval for rerendering component
-    setInterval(() => {
+    
+    this.interval = setInterval(() => {
       this.setState(previousState => 
       {
       //continue if not yet reached target and session is active
-       if ((previousState.elapsedTime != this.props.targetTime) && this.props.inSession){
+       if ((previousState.elapsedTime != this.props.targetTime)){
         return {elapsedTime: previousState.elapsedTime +1};
        }
        //stop if reached target and session is active
-       else if (this.props.inSession){
+       else {
         return {elapsedTime: this.state.targetTime};
        }
       });
     
     }, 1000);  
   
+  }
+
+  componentWillUnmount(){
+    clearInterval(this.interval);
   }
 
   render() {
@@ -163,6 +168,7 @@ export class TimerScreen extends React.Component {
     inSession: false}
   }; 
 
+  //functions for internal App state
   componentDidMount() {
     AppState.addEventListener('change', this._handleAppStateChange);
   }
@@ -172,7 +178,6 @@ export class TimerScreen extends React.Component {
   }
 
   _handleAppStateChange = (nextAppState) => {
-  
   //transition from active to background iff session is active
   if ((this.state.appState.match(/active/) && nextAppState === 'background') && this.state.inSession)
   {
@@ -189,19 +194,25 @@ export class TimerScreen extends React.Component {
 
 //functions to start/end session when START/STOP button is pressed
 _handleSession = (pressed) => {
-
-  //console.log('In Parent function');
-
   if (pressed) {
     this.setState({inSession: true,});
   }
   else{
     this.setState({inSession: false,});
   }
-
 }
 
   render(){
+
+    //conditionally render time elapsed in session
+    const isInSession = this.state.inSession;
+    let timerField = null;
+    if (isInSession){
+      timerField = <TimerDraft 
+      inSession = {this.props.inSession} 
+      targetTime = {this.state.selectedTime*60}/>;
+    }
+
     return (
       <View style = {styles.container}>
       <Text style = {styles.head}> Bloom </Text>
@@ -229,10 +240,7 @@ _handleSession = (pressed) => {
       handleSession = {this._handleSession}
       />
       <Text style = {styles.whiteText}> In Session = {this.state.inSession ? 'ACTIVE':'INACTIVE'} </Text>
-      <TimerDraft 
-      inSession = {this.props.inSession} 
-      targetTime = {this.state.selectedTime*60}/>
-      
+      {timerField}
       </View>
       );
   }
