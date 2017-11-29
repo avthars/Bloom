@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, AppState, Slider} from 'react-native';
+import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, AppState, Slider,
+  Platform} from 'react-native';
 import ApiUtils from './api-utils.js';
 //local database
 //var db = require('react-native-sqlite3');
@@ -96,47 +97,30 @@ export class SMSButton extends React.Component {
     }
   }
 
-    _sendSMS = () => {
-      console.log('in sendSMS');
-      let url = 'https://api.twilio.com/2010-04-01/Accounts/AC40ca87d3e6fdbd696c8b8d64df59a1e0/Messages.json';
-    
-      let accountSid = 'AC40ca87d3e6fdbd696c8b8d64df59a1e0';
-      //auth token
-      let  authToken = 'df6d2772765f6643a865a51ea66de470';
-    
-      let accountabilityBuddyPhoneNo = '+16093563125';
-      let bloomPhoneNo = '+17325888245';
-      let body = "Bloom: Test message. Yay";
-    
-      let encodedToPhone = encodeURIComponent(accountabilityBuddyPhoneNo);
-      let encodedFromPhone = encodeURIComponent(bloomPhoneNo);
-      let encodedBody = encodeURIComponent(body);
 
-      console.log('about to fetch');
+  getMoviesFromApiAsync() {
+    return fetch('https://facebook.github.io/react-native/movies.json')
+      .then((response) => response.json())
+      .then((responseJson) => {
+        return responseJson.movies;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  //function which contacts server, which sends GET request to server to send SMS
+  _sendSMS = () => {
+    var SMS = Platform.OS === 'android'
+    ? 'http://10.8.173.153:55555/sms'
+    : 'http://localhost:55555/sms';
     
-      var Api = {
-        sendSms: function(){
-          return(
-            fetch(url, {
-              method: 'POST',
-              headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-              to: {encodedFromPhone},
-              from: {encodedToPhone},
-              body: {encodedBody},
-              user: {accountSid:authToken}
-              })
-            })
-            .then(ApiUtils.checkStatus)
-            .then(response => response.json())
-            .catch(e => {console.log(e);})
-          );
-        }
-      }
-    }
+    fetch(SMS)
+    .then((response) => response.json())
+    .catch((error) => {
+      console.error(error);
+    });
+  }
 
   _onPress() {
     //change state
@@ -272,8 +256,9 @@ _onEndInput = () => {
       onChangeText = {this._onTextChange}
       onEndEditing = {this._onEndInput}
       />
+      <SMSButton/>
       <Image 
-        style={{width: 400, height: 400}}
+        style={{width: 300, height: 300}}
         source={require('./bloom.png')} />      
       
       <Text style = {styles.whiteText}>
@@ -331,14 +316,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#c0392b',
     borderRadius: 15,
     flex: .5,
-    height: 60,
-    justifyContent: 'center',
-  },
-
-   SendSMSButton: {
-    margin: 10,
-    backgroundColor: 'blue',
-    flex: 1,
     height: 60,
     justifyContent: 'center',
   },
