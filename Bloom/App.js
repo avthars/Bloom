@@ -74,7 +74,7 @@ class TimerDraft extends React.Component {
         //call session complete function
         //this.props.sessionComplete(true)
         this.props.endSession(true);
-        this.props.sendSMS();
+        this.props.sendSMS(true);
         return {elapsedTime: this.state.targetTime};
        }
       });
@@ -163,7 +163,7 @@ export class TimerScreen extends React.Component {
   {
     console.log('App is in the background! User is distracted :( ')
     //call end session function --> send SMS
-    this._sendSMS();
+    this._sendSMS(false);
     this._endSession(false);
     
   }
@@ -190,12 +190,18 @@ _handleSession = (pressed) => {
 }
 
 //function to make HTTP Req to send SMS to accountability buddy
-_sendSMS = () => {
-  var SMS = Platform.OS === 'android'
-  ? 'http://10.8.173.153:55555/sms'
-  : 'http://localhost:55555/sms';
+_sendSMS = (success) => {
   
-  fetch('http://10.8.173.153:55555/sms')
+  //var SMS = Platform.OS === 'android'
+  //? 'http://10.8.173.153:55555/sms'
+  //: 'http://localhost:55555/sms';
+
+  var SMS = 'http://10.8.173.153:55555/sms';
+  if (!success){
+    SMS = 'http://10.8.173.153:55555/smsfail';
+  }
+  
+  fetch(SMS)
   .then((response) => response.json())
   .catch((error) => {
     console.error(error);
