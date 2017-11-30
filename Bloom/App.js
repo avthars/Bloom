@@ -233,10 +233,10 @@ _onEndInput = () => {
     let timerField = null;
     if (this.state.inSession){
       timerField = <TimerDraft 
-      inSession = {this.props.inSession} 
+      inSession  = {this.props.inSession} 
       targetTime = {this.state.selectedTime*60}
       endSession = {this._endSession}
-      sendSMS = {this._sendSMS}/>;
+      sendSMS    = {this._sendSMS}/>;
     }
     //conditionally render session success message
     let victoryMsg = null;
@@ -261,11 +261,13 @@ _onEndInput = () => {
     return (
       <View style = {styles.container}>
       <Text style = {styles.head}> Bloom </Text>
-      <Text style = {styles.numberInput}> The Focus and Accountability App</Text>
+      <Text style = {styles.desc}> The Focus and Accountability App</Text>
       <TextInput 
       style = {styles.numberInput} 
-      placeholder = "Accountability Buddy's Phone No"
-      keyboardType = 'numeric'
+      placeholder = "Accountability Buddy's Phone #"
+      placeholderTextColor = 'lightgray'
+      returnKeyType = 'done'
+      keyboardType = 'number-pad'
       onChangeText = {this._onTextChange}
       onEndEditing = {this._onEndInput}
       value = {this.state.accBuddyNumber}
@@ -340,7 +342,19 @@ const styles = StyleSheet.create({
 
   numberInput: {
     height: 40,
-    width: 250,
+    width: 600,
+    borderWidth: 0,
+    color: 'white',
+    backgroundColor: '#c0392b',
+    borderRadius: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  desc: {
+    height: 40,
+    width: 600,
     borderWidth: 0,
     color: 'white',
     borderRadius: 1,
@@ -349,5 +363,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
   },
+
 
 });
