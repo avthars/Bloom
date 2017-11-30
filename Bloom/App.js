@@ -74,7 +74,7 @@ class TimerDraft extends React.Component {
         //call session complete function
         //this.props.sessionComplete(true)
         this.props.endSession(true);
-        //this.props.sendSMS();
+        this.props.sendSMS();
         return {elapsedTime: this.state.targetTime};
        }
       });
@@ -163,7 +163,7 @@ export class TimerScreen extends React.Component {
   {
     console.log('App is in the background! User is distracted :( ')
     //call end session function --> send SMS
-    //this._sendSMS();
+    this._sendSMS();
     this._endSession(false);
     
   }
@@ -195,7 +195,7 @@ _sendSMS = () => {
   ? 'http://10.8.173.153:55555/sms'
   : 'http://localhost:55555/sms';
   
-  fetch(SMS)
+  fetch('http://10.8.173.153:55555/sms')
   .then((response) => response.json())
   .catch((error) => {
     console.error(error);
