@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, AppState, Slider,
   Platform} from 'react-native';
-import ApiUtils from './api-utils.js';
 //local database
 //var db = require('react-native-sqlite3');
 
@@ -31,7 +30,9 @@ function putFlower(id, variety, complete) {
   });
 }
 
-//Main App Component
+//----------------------------------------------------
+// Main App Component
+//----------------------------------------------------
 //containts main app state
 export default class App extends React.Component {
   constructor(props){
@@ -46,6 +47,9 @@ export default class App extends React.Component {
   }
 }
 
+//----------------------------------------------------
+// Timer Component
+//----------------------------------------------------
 // Initial version of Timer
 class TimerDraft extends React.Component {
   constructor(props) {
@@ -69,6 +73,8 @@ class TimerDraft extends React.Component {
        else {
         //call session complete function
         //this.props.sessionComplete(true)
+        this.props.endSession(true);
+        //this.props.sendSMS();
         return {elapsedTime: this.state.targetTime};
        }
       });
@@ -88,68 +94,10 @@ class TimerDraft extends React.Component {
   }
 }
 
-//Button which sends SMS to accountability buddy
-export class SMSButton extends React.Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      toggle: false
-    }
-  }
-
-
-  getMoviesFromApiAsync() {
-    return fetch('https://facebook.github.io/react-native/movies.json')
-      .then((response) => response.json())
-      .then((responseJson) => {
-        return responseJson.movies;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
-
-  //function which contacts server, which sends GET request to server to send SMS
-  _sendSMS = () => {
-    var SMS = Platform.OS === 'android'
-    ? 'http://10.8.173.153:55555/sms'
-    : 'http://localhost:55555/sms';
-    
-    fetch(SMS)
-    .then((response) => response.json())
-    .catch((error) => {
-      console.error(error);
-    });
-  }
-
-  _onPress() {
-    //change state
-    const newState = !this.state.toggle;
-    this.setState({toggle: newState})
-
-    //call send message function
-    this._sendSMS();
-  }
-
-  render(){
-    const {toggle} = this.state;
-    const textValue = toggle?"SMS Sent":"Send SMS";
-    return (
-            <View style = {{flexDirection: 'row'}}>
-            <TouchableOpacity 
-            style = {styles.sessionButton}
-            onPress = {()=> this._onPress()}>
-            <Text style = {{color: 'white', textAlign: 'center', fontSize: 16, }}> {textValue} </Text>
-            </TouchableOpacity>
-            </View>
-      );
-  }
-}
-
 //Button which starts and stops a session
 export class SessionButton extends React.Component {
   state = {
-    toggle : false
+    toggle : this.props.inSession
   }
 
   //Start new session or end current session when button is pressed
@@ -162,8 +110,7 @@ export class SessionButton extends React.Component {
   }
 
   render(){
-    const {toggle} = this.state;
-    const textValue = toggle?"STOP":"START";
+    const textValue = this.props.inSession?"IN SESSION":"START";
     return (
           <View style = {{flexDirection: 'row'}}>
             <TouchableOpacity 
@@ -177,6 +124,9 @@ export class SessionButton extends React.Component {
   }
 }
 
+
+
+
 // Test component for getting started
 export class TimerScreen extends React.Component {
   constructor(props) {
@@ -185,9 +135,18 @@ export class TimerScreen extends React.Component {
   { selectedTime: 1,
     appState: AppState.currentState,
     inSession: false,
-    sessionTask: ''
+    accBuddyNumber: '',
+    sessionSuccess: false,
+    sessionFailure: false
   }
-  }; 
+  };
+  
+  //set inSession, sessionSuccess, sessioFailure to false
+  _reset = () => {
+    this.setState({inSession: false});
+    this.setState({sessionSuccess: false});
+    this.setState({sessionSuccess: false});
+  }
 
   //functions for internal App state
   componentDidMount() {
@@ -203,11 +162,16 @@ export class TimerScreen extends React.Component {
   if ((this.state.appState.match(/active/) && nextAppState === 'background') && this.state.inSession)
   {
     console.log('App is in the background! User is distracted :( ')
+    //call end session function --> send SMS
+    //this._sendSMS();
+    this._endSession(false);
+    
   }
   //transition from background/inactive to active iff session is active
   else if ((this.state.appState.match(/background|inactive/) && nextAppState === 'active')&& this.state.inSession)
   {
     console.log('App is in the foreground. User is focusing :) ')
+    //user came back to foreground, do nothing
   }
 
   this.setState({appState: nextAppState});
@@ -217,46 +181,96 @@ export class TimerScreen extends React.Component {
 _handleSession = (pressed) => {
   if (pressed) {
     this.setState({inSession: true,});
+    //start new session and create new session object
   }
   else{
     this.setState({inSession: false,});
+    //end a current session and don't send feedback to user
   }
 }
 
-//function to make HTTP Post Request to Twilio
-
-//Capture and save task associated with session
-_onTextChange = (task) => {
-  //console.log(task);
-  this.setState({sessionTask: task});
+//function to make HTTP Req to send SMS to accountability buddy
+_sendSMS = () => {
+  var SMS = Platform.OS === 'android'
+  ? 'http://10.8.173.153:55555/sms'
+  : 'http://localhost:55555/sms';
+  
+  fetch(SMS)
+  .then((response) => response.json())
+  .catch((error) => {
+    console.error(error);
+  });
 }
 
+//function that ends a session currently in progress
+_endSession = (success) => {
+  //end session
+  this.setState({inSession: false});
+
+  if (success){
+    this.setState({sessionSuccess: true});
+    this.setState({inSession: false});
+  }
+  else {
+    this.setState({sessionFailure: true});
+    this.setState({inSession: false})
+  }
+}
+
+
+//Capture and save task associated with session
+_onTextChange = (number) => {
+  //console.log(task);
+  this.setState({accBuddyNumber: number});
+}
 //After user has finished editing input, take final state
 _onEndInput = () => {
-  console.log(this.state.sessionTask);
+  console.log(this.state.accBuddyNumber);
 }
 
   render(){
-
     //conditionally render time elapsed in session
-    const isInSession = this.state.inSession;
     let timerField = null;
-    if (isInSession){
+    if (this.state.inSession){
       timerField = <TimerDraft 
       inSession = {this.props.inSession} 
-      targetTime = {this.state.selectedTime*60}/>;
+      targetTime = {this.state.selectedTime*60}
+      endSession = {this._endSession}
+      sendSMS = {this._sendSMS}/>;
     }
+    //conditionally render session success message
+    let victoryMsg = null;
+    if(this.state.sessionSuccess){
+      //HILAL: Change styles on this to make look big and nice
+      victoryMsg = <Text style = {styles.whiteText}> Session Complete :) </Text>;
+    }
+    else {
+      victoryMsg = null;
+    }
+    //conditionally render failure message
+    let failureMsg = null;
+    if(this.state.sessionFailure){
+      //HILAL: Change styles on this to make look big and nice
+      failureMsg = <Text style = {styles.whiteText}> Session Failed :( </Text>;
+    }
+    else{
+      failureMsg = null;
+    }
+
 
     return (
       <View style = {styles.container}>
       <Text style = {styles.head}> Bloom </Text>
+      <Text style = {styles.numberInput}> The Focus and Accountability App</Text>
       <TextInput 
-      style = {styles.taskInput} 
-      placeholder = "What do you want to focus on?"
+      style = {styles.numberInput} 
+      placeholder = "Accountability Buddy's Phone No"
+      keyboardType = 'numeric'
       onChangeText = {this._onTextChange}
       onEndEditing = {this._onEndInput}
+      value = {this.state.accBuddyNumber}
       />
-      <SMSButton/>
+
       <Image 
         style={{width: 300, height: 300}}
         source={require('./bloom.png')} />      
@@ -277,9 +291,13 @@ _onEndInput = () => {
       
       <SessionButton 
       handleSession = {this._handleSession}
+      inSession = {this.state.inSession}
       />
+      
       <Text style = {styles.whiteText}> In Session = {this.state.inSession ? 'ACTIVE':'INACTIVE'} </Text>
       {timerField}
+      {victoryMsg}
+      {failureMsg}
       </View>
       );
   }
@@ -320,7 +338,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  taskInput: {
+  numberInput: {
     height: 40,
     width: 250,
     borderWidth: 0,
