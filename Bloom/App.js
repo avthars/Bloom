@@ -141,6 +141,23 @@ export class TimerScreen extends React.Component {
   }
   };
   
+  //----------------------------------------------------
+  //--------------login attempt 1 ----------------------
+
+  async logIn() {
+    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('1537482253004166', {
+        permissions: ['public_profile'],
+      });
+    if (type === 'success') {
+      // Get the user's name using Facebook's Graph API
+      const response = await fetch(
+        `https://graph.facebook.com/me?access_token=${token}`);
+      Alert.alert(
+        'Logged in!',
+        `Hi ${(await response.json()).name}!`,
+      );
+    }
+  }
   //set inSession, sessionSuccess, sessioFailure to false
   _reset = () => {
     this.setState({inSession: false});
@@ -300,6 +317,10 @@ _onEndInput = () => {
       <SessionButton 
       handleSession = {this._handleSession}
       inSession = {this.state.inSession}
+      />
+      <Button
+      onPress = {this.logIn.bind(this)}
+      title   = 'Login Using The Facebook'
       />
       
       <Text style = {styles.whiteText}> In Session = {this.state.inSession ? 'ACTIVE':'INACTIVE'} </Text>
