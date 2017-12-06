@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, AppState, Slider,
   Platform} from 'react-native';
-//local database
+//local database    .
 //var db = require('react-native-sqlite3');
 
 // sends request to server to put flower in database
