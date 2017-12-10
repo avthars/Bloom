@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, AppState, Slider,
-  Platform} from 'react-native';
-//local database    .
+  Platform, AppRegistry} from 'react-native';
+import { StackNavigator } from 'react-navigation';
+
+  //local database    .
 //var db = require('react-native-sqlite3');
 
 // sends request to server to put flower in database
@@ -30,6 +32,8 @@ function putFlower(id, variety, complete) {
   });
 }
 
+
+
 //----------------------------------------------------
 // Main App Component
 //----------------------------------------------------
@@ -39,13 +43,28 @@ export default class App extends React.Component {
     super(props);
   }
   render() {
+    return (<SimpleApp/>);
+  }
+}
+
+
+class LoginScreen extends React.Component {
+  static navigationOptions = {
+    title: 'Welcome to Bloom',
+  };
+  render() {
+    const { navigate } = this.props.navigation;
     return (
-      <View style={styles.container}>
-       <TimerScreen/>
+      <View>
+        <Button
+          onPress={() => navigate('Home')}
+          title="Go to Timer"
+        />
       </View>
     );
   }
 }
+
 
 //----------------------------------------------------
 // Timer Component
@@ -125,9 +144,7 @@ export class SessionButton extends React.Component {
 }
 
 
-
-
-// Test component for getting started
+// Main screen for session start + timing
 export class TimerScreen extends React.Component {
   constructor(props) {
   super(props)
@@ -139,6 +156,11 @@ export class TimerScreen extends React.Component {
     sessionSuccess: false,
     sessionFailure: false
   }
+  };
+
+  //Data passed thru navigator
+  static navigationOptions = {
+    title: 'Timer Screen'
   };
   
   //----------------------------------------------------
@@ -158,6 +180,7 @@ export class TimerScreen extends React.Component {
       );
     }
   }
+
   //set inSession, sessionSuccess, sessioFailure to false
   _reset = () => {
     this.setState({inSession: false});
@@ -280,6 +303,8 @@ _onEndInput = () => {
       failureMsg = null;
     }
 
+    //for navigation
+    const { navigate } = this.props.navigation;
 
     return (
       <View style = {styles.container}>
@@ -320,7 +345,7 @@ _onEndInput = () => {
       />
       <Button
       onPress = {this.logIn.bind(this)}
-      title   = 'Login Using The Facebook'
+      title   = 'Login with Facebook'
       />
       
       <Text style = {styles.whiteText}> In Session = {this.state.inSession ? 'ACTIVE':'INACTIVE'} </Text>
@@ -331,6 +356,16 @@ _onEndInput = () => {
       );
   }
 }
+
+
+//----------------------------------------------------
+// Navigation
+//----------------------------------------------------
+const SimpleApp = StackNavigator({
+  //list of screens in app
+  Login: {screen: LoginScreen},
+  Home: {screen: TimerScreen},
+});
 
 
 
