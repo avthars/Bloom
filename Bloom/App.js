@@ -48,7 +48,32 @@ export default class App extends React.Component {
 }
 
 
+//----------------------------------------------------
+// Login Component -- should change
+//----------------------------------------------------
 class LoginScreen extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {};
+  }
+  
+  //----------------------------------------------------
+  //--------------login attempt 1 ----------------------
+  async logIn() {
+    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('1537482253004166', {
+        permissions: ['public_profile'],
+      });
+    if (type === 'success') {
+      // Get the user's name using Facebook's Graph API
+      const response = await fetch(
+        `https://graph.facebook.com/me?access_token=${token}`);
+      Alert.alert(
+        'Logged in!',
+        `Hi ${(await response.json()).name}!`,
+      );
+    }
+  }
+  
   static navigationOptions = {
     title: 'Welcome to Bloom',
   };
@@ -56,10 +81,18 @@ class LoginScreen extends React.Component {
     const { navigate } = this.props.navigation;
     return (
       <View>
+        
+        <Button
+      onPress = {this.logIn.bind(this)}
+      title   = 'Login with Facebook'
+      />
+        
         <Button
           onPress={() => navigate('Home')}
           title="Go to Timer"
         />
+
+
       </View>
     );
   }
@@ -80,7 +113,6 @@ class TimerDraft extends React.Component {
 
     //count up to target time + then stop
     //interval for rerendering component
-    
     this.interval = setInterval(() => {
       this.setState(previousState => 
       {
@@ -102,6 +134,7 @@ class TimerDraft extends React.Component {
   
   }
 
+  //before this component exits the screen, clear the timer
   componentWillUnmount(){
     clearInterval(this.interval);
   }
@@ -163,24 +196,6 @@ export class TimerScreen extends React.Component {
     title: 'Timer Screen'
   };
   
-  //----------------------------------------------------
-  //--------------login attempt 1 ----------------------
-
-  async logIn() {
-    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('1537482253004166', {
-        permissions: ['public_profile'],
-      });
-    if (type === 'success') {
-      // Get the user's name using Facebook's Graph API
-      const response = await fetch(
-        `https://graph.facebook.com/me?access_token=${token}`);
-      Alert.alert(
-        'Logged in!',
-        `Hi ${(await response.json()).name}!`,
-      );
-    }
-  }
-
   //set inSession, sessionSuccess, sessioFailure to false
   _reset = () => {
     this.setState({inSession: false});
@@ -236,14 +251,17 @@ _sendSMS = (success) => {
   //? 'http://10.8.173.153:55555/sms'
   //: 'http://localhost:55555/sms';
 
+  //successful message
   var SMS = 'http://10.8.173.153:55555/sms';
   if (!success){
+    //failure message
     SMS = 'http://10.8.173.153:55555/smsfail';
   }
   
   fetch(SMS)
   .then((response) => response.json())
   .catch((error) => {
+    //should display error on screen if SMS cannot be sent
     console.error(error);
   });
 }
@@ -271,6 +289,7 @@ _onTextChange = (number) => {
 }
 //After user has finished editing input, take final state
 _onEndInput = () => {
+  //save the accountability buddy's number
   console.log(this.state.accBuddyNumber);
 }
 
@@ -286,6 +305,7 @@ _onEndInput = () => {
     }
     //conditionally render session success message
     let victoryMsg = null;
+    
     if(this.state.sessionSuccess){
       //HILAL: Change styles on this to make look big and nice
       victoryMsg = <Text style = {styles.whiteText}> Session Complete :) </Text>;
@@ -343,11 +363,7 @@ _onEndInput = () => {
       handleSession = {this._handleSession}
       inSession = {this.state.inSession}
       />
-      <Button
-      onPress = {this.logIn.bind(this)}
-      title   = 'Login with Facebook'
-      />
-      
+    
       <Text style = {styles.whiteText}> In Session = {this.state.inSession ? 'ACTIVE':'INACTIVE'} </Text>
       {timerField}
       {victoryMsg}
@@ -369,7 +385,9 @@ const SimpleApp = StackNavigator({
 
 
 
-
+//----------------------------------------------------
+// Stylesheet classes
+//----------------------------------------------------
 const styles = StyleSheet.create({
   head: {
     fontSize: 40,
