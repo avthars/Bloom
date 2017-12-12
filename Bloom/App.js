@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, AppState, Slider,
   Platform, AppRegistry} from 'react-native';
 import { StackNavigator } from 'react-navigation';
+import { withMappedNavigationProps as mapProps} from 'react-navigation-props-mapper';
+//session object
+import {Session} from './session';
 
   //local database    .
 //var db = require('react-native-sqlite3');
@@ -32,18 +35,46 @@ function putFlower(id, variety, complete) {
   });
 }
 
-
-
 //----------------------------------------------------
 // Main App Component
 //----------------------------------------------------
-//containts main app state
+//containts info accessible to all other components in the app via props
+//
 export default class App extends React.Component {
   constructor(props){
     super(props);
+    this.state = {
+      //get these values from the DB when the app starts
+      totalSessions: 0,
+      totalSuccesses: 0,
+      totalFailures:0,
+      totalTime:0,
+      //Arr of session objects to display in results
+      sessionHistory: [],
+    };
   }
+
+  //method to record end of session
+  _recordSession = (session, success) => {
+
+    //incr total sessions
+    if (success) {
+      //incr totalSuccesses
+    }
+    else {
+      //incr totalFailures
+    }
+
+    //add session to sessionHistory
+
+    //add session.time to totalTime focused
+
+  }
+
+
   render() {
-    return (<SimpleApp/>);
+    return (<SimpleApp
+    />);
   }
 }
 
@@ -176,8 +207,9 @@ export class SessionButton extends React.Component {
   }
 }
 
-
+//-----------------------------------------------------
 // Main screen for session start + timing
+//-----------------------------------------------------
 export class TimerScreen extends React.Component {
   constructor(props) {
   super(props)
@@ -187,7 +219,7 @@ export class TimerScreen extends React.Component {
     inSession: false,
     accBuddyNumber: '',
     sessionSuccess: false,
-    sessionFailure: false
+    sessionFailure: false,
   }
   };
 
@@ -218,7 +250,8 @@ export class TimerScreen extends React.Component {
   {
     console.log('App is in the background! User is distracted :( ')
     //call end session function --> send SMS
-    this._sendSMS(false);
+    //ENABLE FOR DEMO
+    //this._sendSMS(false);
     this._endSession(false);
     
   }
@@ -235,8 +268,12 @@ export class TimerScreen extends React.Component {
 //functions to start/end session when START/STOP button is pressed
 _handleSession = (pressed) => {
   if (pressed) {
-    this.setState({inSession: true,});
+    
     //start new session and create new session object
+    
+    //start session
+    this.setState({inSession: true,});
+    
   }
   else{
     this.setState({inSession: false,});
@@ -279,6 +316,11 @@ _endSession = (success) => {
     this.setState({sessionFailure: true});
     this.setState({inSession: false})
   }
+
+  //create new Session object + update results
+
+
+
 }
 
 
@@ -382,8 +424,6 @@ const SimpleApp = StackNavigator({
   Login: {screen: LoginScreen},
   Home: {screen: TimerScreen},
 });
-
-
 
 //----------------------------------------------------
 // Stylesheet classes
