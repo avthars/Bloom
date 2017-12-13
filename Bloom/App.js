@@ -5,16 +5,17 @@ import { StackNavigator, TabNavigator, DrawerNavigator } from 'react-navigation'
 import { withMappedNavigationProps as mapProps} from 'react-navigation-props-mapper';
 //session object
 import {Session} from './session';
+//functions to interface with user data in DB
+import {putFlower, registerUser, getFlowers} from './communication.js';
 
   //local database    .
 //var db = require('react-native-sqlite3');
-
 
 //----------------------------------------------------
 // Main App Component
 //----------------------------------------------------
 //containts info accessible to all other components in the app via props
-//
+
 export default class App extends React.Component {
   constructor(props){
     super(props);
@@ -24,7 +25,6 @@ export default class App extends React.Component {
     return (<SimpleApp/>);
   }
 }
-
 
 //----------------------------------------------------
 // Login Component -- should change
@@ -86,6 +86,14 @@ class ProgressScreen extends React.Component {
   constructor(props){
     super(props);
     this.state = {};
+  }
+
+  //when component is mounting, get the flowers
+  componentWillMount(){
+    //get all flowers for test
+    flowers = getFlowers();
+    console.log('Heres some flowers');
+    console.log(flowers);
   }
 
   render(){
@@ -385,7 +393,7 @@ _onEndInput = () => {
 
 
 //----------------------------------------------------
-// Stack Nav
+// Tab Nav for homescreen
 //----------------------------------------------------
 const HomeScreen = TabNavigator(
   {
@@ -399,7 +407,7 @@ const HomeScreen = TabNavigator(
 
 
 //----------------------------------------------------
-// Stack Nav
+// Stack Nav for login and home (could change later)
 //----------------------------------------------------
 const SimpleApp = StackNavigator({
   //list of screens in app

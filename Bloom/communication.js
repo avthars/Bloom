@@ -36,7 +36,7 @@ export const registerUser = (username) => {
   var API = Platform.OS === 'android'
   ? 'http://10.9.9.30:55555/v1/users'
   : 'http://localhost:55555/v1/users';
-
+  
   fetch(API, {
     method: 'POST',
     headers: {
@@ -44,7 +44,7 @@ export const registerUser = (username) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      name: username;
+      name: username,
     })
   })
   .then((res) => res.json())
@@ -58,6 +58,9 @@ export const getFlowers = () => {
   var API = Platform.OS === 'android'
   ? 'http://10.9.9.30:55555/v1/flowers'
   : 'http://localhost:55555/v1/flowers';
+
+  //temp overwrite for Avthar's computer
+  API = 'http://10.8.173.153:55555/v1/flowers'
 
   fetch(API)
   .then(function(res) {
