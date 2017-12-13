@@ -387,11 +387,16 @@ _onEndInput = () => {
 //----------------------------------------------------
 // Stack Nav
 //----------------------------------------------------
-const HomeScreen = TabNavigator({
-  //list of screens in app
+const HomeScreen = TabNavigator(
+  {
   Timer: {screen: TimerScreen},
-  Progress: {screen: ProgressScreen},
+  Progress: {screen: ProgressScreen,},
+  },
+  {
+  tabBarPosition: 'bottom',
+  animationEnabled: true,
 });
+
 
 //----------------------------------------------------
 // Stack Nav
