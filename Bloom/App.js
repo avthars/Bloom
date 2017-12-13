@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, AppState, Slider,
   Platform, AppRegistry} from 'react-native';
-import { StackNavigator } from 'react-navigation';
+import { StackNavigator, TabNavigator, DrawerNavigator } from 'react-navigation';
 import { withMappedNavigationProps as mapProps} from 'react-navigation-props-mapper';
 //session object
 import {Session} from './session';
@@ -18,38 +18,10 @@ import {Session} from './session';
 export default class App extends React.Component {
   constructor(props){
     super(props);
-    this.state = {
-      //get these values from the DB when the app starts
-      totalSessions: 0,
-      totalSuccesses: 0,
-      totalFailures:0,
-      totalTime:0,
-      //Arr of session objects to display in results
-      sessionHistory: [],
-    };
+    this.state = {};
   }
-
-  //method to record end of session
-  _recordSession = (session, success) => {
-
-    //incr total sessions
-    if (success) {
-      //incr totalSuccesses
-    }
-    else {
-      //incr totalFailures
-    }
-
-    //add session to sessionHistory
-
-    //add session.time to totalTime focused
-
-  }
-
-
   render() {
-    return (<SimpleApp
-    />);
+    return (<SimpleApp/>);
   }
 }
 
@@ -62,7 +34,6 @@ class LoginScreen extends React.Component {
     super(props);
     this.state = {};
   }
-
   //----------------------------------------------------
   //--------------login attempt 1 ----------------------
   async logIn() {
@@ -80,9 +51,11 @@ class LoginScreen extends React.Component {
     }
   }
 
+  //nav data: title of screen
   static navigationOptions = {
     title: 'Welcome to Bloom',
   };
+
   render() {
     const { navigate } = this.props.navigation;
     return (
@@ -95,7 +68,7 @@ class LoginScreen extends React.Component {
 
         <Button
           onPress={() => navigate('Home')}
-          title="Go to Timer"
+          title="Home"
         />
 
 
@@ -104,6 +77,26 @@ class LoginScreen extends React.Component {
   }
 }
 
+
+//----------------------------------------------------
+// Progress Screen Component
+// shows user history and total stats
+//----------------------------------------------------
+class ProgressScreen extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {};
+  }
+
+  render(){
+    return(
+      <View style = {styles.container}>
+      <Text style = {styles.head}> Bloom </Text>
+      <Text style = {styles.desc}> Your Progress</Text>
+      </View>
+    );
+  }
+}
 
 //----------------------------------------------------
 // Timer Component
@@ -200,7 +193,7 @@ export class TimerScreen extends React.Component {
 
   //Data passed thru navigator
   static navigationOptions = {
-    title: 'Timer Screen'
+    title: 'Home Screen'
   };
 
   //set inSession, sessionSuccess, sessioFailure to false
@@ -392,12 +385,21 @@ _onEndInput = () => {
 
 
 //----------------------------------------------------
-// Navigation
+// Stack Nav
+//----------------------------------------------------
+const HomeScreen = TabNavigator({
+  //list of screens in app
+  Timer: {screen: TimerScreen},
+  Progress: {screen: ProgressScreen},
+});
+
+//----------------------------------------------------
+// Stack Nav
 //----------------------------------------------------
 const SimpleApp = StackNavigator({
   //list of screens in app
   Login: {screen: LoginScreen},
-  Home: {screen: TimerScreen},
+  Home: {screen: HomeScreen},
 });
 
 //----------------------------------------------------
