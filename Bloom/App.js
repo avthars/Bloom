@@ -4,31 +4,6 @@ import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, App
 //local database    .
 //var db = require('react-native-sqlite3');
 
-// sends request to server to put flower in database
-// sample usage: putFlower('xxxxx', 'tigerlily', 'true');
-function putFlower(id, variety, complete) {
-  var API = Platform.OS === 'android'
-  ? 'http://10.9.9.30:55555/v1/flowers'
-  : 'http://localhost:55555/v1/flowers';
-
-  fetch(API, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      id: id,
-      variety: variety,
-      complete: complete,
-      time: Date.now()
-    })
-  })
-  .then((res) => res.json())
-  .catch((err) => {
-    console.error(err);
-  });
-}
 
 //----------------------------------------------------
 // Main App Component
@@ -61,9 +36,9 @@ class TimerDraft extends React.Component {
 
     //count up to target time + then stop
     //interval for rerendering component
-    
+
     this.interval = setInterval(() => {
-      this.setState(previousState => 
+      this.setState(previousState =>
       {
       //continue if not yet reached target and session is active
        if ((previousState.elapsedTime != this.props.targetTime)){
@@ -78,9 +53,9 @@ class TimerDraft extends React.Component {
         return {elapsedTime: this.state.targetTime};
        }
       });
-    
-    }, 1000);  
-  
+
+    }, 1000);
+
   }
 
   componentWillUnmount(){
@@ -113,7 +88,7 @@ export class SessionButton extends React.Component {
     const textValue = this.props.inSession?"IN SESSION":"START";
     return (
           <View style = {{flexDirection: 'row'}}>
-            <TouchableOpacity 
+            <TouchableOpacity
             style = {styles.sessionButton}
             onPress = {()=> this._onPress()}
             >
@@ -131,7 +106,7 @@ export class SessionButton extends React.Component {
 export class TimerScreen extends React.Component {
   constructor(props) {
   super(props)
-  this.state = 
+  this.state =
   { selectedTime: 1,
     appState: AppState.currentState,
     inSession: false,
@@ -140,7 +115,8 @@ export class TimerScreen extends React.Component {
     sessionFailure: false
   }
   };
-  
+
+
   //----------------------------------------------------
   //--------------login attempt 1 ----------------------
 
@@ -158,6 +134,7 @@ export class TimerScreen extends React.Component {
       );
     }
   }
+
   //set inSession, sessionSuccess, sessioFailure to false
   _reset = () => {
     this.setState({inSession: false});
@@ -182,7 +159,7 @@ export class TimerScreen extends React.Component {
     //call end session function --> send SMS
     this._sendSMS(false);
     this._endSession(false);
-    
+
   }
   //transition from background/inactive to active iff session is active
   else if ((this.state.appState.match(/background|inactive/) && nextAppState === 'active')&& this.state.inSession)
@@ -208,7 +185,7 @@ _handleSession = (pressed) => {
 
 //function to make HTTP Req to send SMS to accountability buddy
 _sendSMS = (success) => {
-  
+
   //var SMS = Platform.OS === 'android'
   //? 'http://10.8.173.153:55555/sms'
   //: 'http://localhost:55555/sms';
@@ -217,7 +194,7 @@ _sendSMS = (success) => {
   if (!success){
     SMS = 'http://10.8.173.153:55555/smsfail';
   }
-  
+
   fetch(SMS)
   .then((response) => response.json())
   .catch((error) => {
@@ -255,8 +232,8 @@ _onEndInput = () => {
     //conditionally render time elapsed in session
     let timerField = null;
     if (this.state.inSession){
-      timerField = <TimerDraft 
-      inSession  = {this.props.inSession} 
+      timerField = <TimerDraft
+      inSession  = {this.props.inSession}
       targetTime = {this.state.selectedTime*60}
       endSession = {this._endSession}
       sendSMS    = {this._sendSMS}/>;
@@ -285,8 +262,8 @@ _onEndInput = () => {
       <View style = {styles.container}>
       <Text style = {styles.head}> Bloom </Text>
       <Text style = {styles.desc}> The Focus and Accountability App</Text>
-      <TextInput 
-      style = {styles.numberInput} 
+      <TextInput
+      style = {styles.numberInput}
       placeholder = "Accountability Buddy's Phone #"
       placeholderTextColor = 'lightgray'
       returnKeyType = 'done'
@@ -296,10 +273,10 @@ _onEndInput = () => {
       value = {this.state.accBuddyNumber}
       />
 
-      <Image 
+      <Image
         style={{width: 300, height: 300}}
-        source={require('./bloom.png')} />      
-      
+        source={require('./bloom.png')} />
+
       <Text style = {styles.whiteText}>
       Focus for {this.state.selectedTime} minutes
       </Text>
@@ -313,16 +290,18 @@ _onEndInput = () => {
             //thumbTouchSize={width: 80, height: 80}
             onValueChange={val => this.setState({selectedTime: val })}
             />
-      
-      <SessionButton 
+
+      <SessionButton
       handleSession = {this._handleSession}
       inSession = {this.state.inSession}
       />
+
       <Button
       onPress = {this.logIn.bind(this)}
       title   = 'Login Using The Facebook'
       />
-      
+
+
       <Text style = {styles.whiteText}> In Session = {this.state.inSession ? 'ACTIVE':'INACTIVE'} </Text>
       {timerField}
       {victoryMsg}
@@ -349,7 +328,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  
+
   whiteText: {
     fontSize: 16,
     textAlign: 'center',
