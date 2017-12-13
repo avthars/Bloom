@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, Video, TextInput, Button, TouchableOpacity, AppState, Slider,
-  Platform, AppRegistry} from 'react-native';
+  Platform, AppRegistry, Alert} from 'react-native';
 import { StackNavigator, TabNavigator, DrawerNavigator } from 'react-navigation';
 import { withMappedNavigationProps as mapProps} from 'react-navigation-props-mapper';
 //session object
@@ -12,8 +12,8 @@ import {putFlower, registerUser, getFlowers} from './communication.js';
 //var db = require('react-native-sqlite3');
 
 //put two flowers into DB
-//putFlower('rose', true, 'Avthar', 'Hilal');
-//putFlower('dead', false, 'Avthar', 'Shefali');
+putFlower('rose', true, 'Avthar', 'Hilal');
+putFlower('dead', false, 'Avthar', 'Shefali');
 
 //----------------------------------------------------
 // Main App Component
@@ -107,10 +107,10 @@ class ProgressScreen extends React.Component {
     //put a flower into the DB
     //get all flowers for test
     console.log('willMount');
-    //strings = getFlowers();
+    flowers = getFlowers();
     //console.log(strings);
     //console.log('Heres some flowers');
-    //console.log(JSON.stringify(flowers));
+    console.log(JSON.stringify(flowers));
   }
   
   static navigationOptions = {
@@ -429,7 +429,6 @@ const HomeScreen = TabNavigator(
     }
 
 });
-
 
 //----------------------------------------------------
 // Stack Nav for login and home (could change later)
