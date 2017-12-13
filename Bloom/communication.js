@@ -12,6 +12,9 @@ export const putFlower = (variety, complete, fromUser, toUser) => {
   ? 'http://10.9.9.30:55555/v1/flowers'
   : 'http://localhost:55555/v1/flowers';
 
+   //temp overwrite for Avthar's computer
+   API = 'http://10.8.173.153:55555/v1/flowers'
+
   fetch(API, {
     method: 'POST',
     headers: {
@@ -36,6 +39,9 @@ export const registerUser = (username) => {
   var API = Platform.OS === 'android'
   ? 'http://10.9.9.30:55555/v1/users'
   : 'http://localhost:55555/v1/users';
+
+  //temp overwrite for Avthar's computer
+  API = 'http://10.8.173.153:55555/v1/flowers'
   
   fetch(API, {
     method: 'POST',

@@ -11,6 +11,10 @@ import {putFlower, registerUser, getFlowers} from './communication.js';
   //local database    .
 //var db = require('react-native-sqlite3');
 
+//put two flowers into DB
+putFlower('rose', true, 'Avthar', 'Hilal');
+putFlower('dead', false, 'Avthar', 'Shefali');
+
 //----------------------------------------------------
 // Main App Component
 //----------------------------------------------------
@@ -88,12 +92,15 @@ class ProgressScreen extends React.Component {
     this.state = {};
   }
 
-  //when component is mounting, get the flowers
+  //when component has mounted, get the flowers
   componentWillMount(){
+    //put a flower into the DB
     //get all flowers for test
-    flowers = getFlowers();
-    console.log('Heres some flowers');
-    console.log(flowers);
+    console.log('willMount');
+    strings = getFlowers();
+    console.log(strings);
+    //console.log('Heres some flowers');
+    //console.log(JSON.stringify(flowers));
   }
 
   render(){
