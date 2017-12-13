@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, AppState, Slider,
+import { StyleSheet, Text, View, Image, Video, TextInput, Button, TouchableOpacity, AppState, Slider,
   Platform, AppRegistry} from 'react-native';
 import { StackNavigator, TabNavigator, DrawerNavigator } from 'react-navigation';
 import { withMappedNavigationProps as mapProps} from 'react-navigation-props-mapper';
@@ -12,8 +12,8 @@ import {putFlower, registerUser, getFlowers} from './communication.js';
 //var db = require('react-native-sqlite3');
 
 //put two flowers into DB
-putFlower('rose', true, 'Avthar', 'Hilal');
-putFlower('dead', false, 'Avthar', 'Shefali');
+//putFlower('rose', true, 'Avthar', 'Hilal');
+//putFlower('dead', false, 'Avthar', 'Shefali');
 
 //----------------------------------------------------
 // Main App Component
@@ -42,7 +42,7 @@ class LoginScreen extends React.Component {
   //--------------login attempt 1 ----------------------
   async logIn() {
     const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('1537482253004166', {
-        permissions: ['public_profile'],
+        permissions: ['public_profile', 'email', 'user_friends'],
       });
     if (type === 'success') {
       // Get the user's name using Facebook's Graph API
@@ -57,13 +57,23 @@ class LoginScreen extends React.Component {
 
   //nav data: title of screen
   static navigationOptions = {
-    title: 'Welcome to Bloom',
+    /*title: 'Bloom',*/
+    headerTintColor: 'black',
+    BackgroundColor: 'black',
+    header: null 
   };
 
   render() {
     const { navigate } = this.props.navigation;
     return (
-      <View>
+      <View style = {styles.container}>
+
+       <Text style = {styles.head}> Bloom </Text>
+    <Text style = {styles.desc}> The Focus and Accountability App</Text>
+    
+     <Text style = {styles.head}>  </Text>
+      <Image source={require('./flower2.gif')} style = {{height: 340, width: 400, resizeMode : 'stretch',}} />
+         <Text style = {styles.head}>  </Text>
 
         <Button
       onPress = {this.logIn.bind(this)}
@@ -72,7 +82,7 @@ class LoginScreen extends React.Component {
 
         <Button
           onPress={() => navigate('Home')}
-          title="Home"
+          title="skip"
         />
 
 
@@ -97,11 +107,18 @@ class ProgressScreen extends React.Component {
     //put a flower into the DB
     //get all flowers for test
     console.log('willMount');
-    strings = getFlowers();
-    console.log(strings);
+    //strings = getFlowers();
+    //console.log(strings);
     //console.log('Heres some flowers');
     //console.log(JSON.stringify(flowers));
   }
+  
+  static navigationOptions = {
+    /*title: 'Bloom',*/
+    headerTintColor: 'black',
+    BackgroundColor: 'black',
+    header: null 
+  };
 
   render(){
     return(
@@ -208,9 +225,10 @@ export class TimerScreen extends React.Component {
 
   //Data passed thru navigator
   static navigationOptions = {
-    title: 'Home Screen'
+    title: 'Focus',
+    header: null
   };
-
+  
   //set inSession, sessionSuccess, sessioFailure to false
   _reset = () => {
     this.setState({inSession: false});
@@ -353,8 +371,7 @@ _onEndInput = () => {
 
     return (
       <View style = {styles.container}>
-      <Text style = {styles.head}> Bloom </Text>
-      <Text style = {styles.desc}> The Focus and Accountability App</Text>
+ 
       <TextInput
       style = {styles.numberInput}
       placeholder = "Accountability Buddy's Phone #"
@@ -366,9 +383,7 @@ _onEndInput = () => {
       value = {this.state.accBuddyNumber}
       />
 
-      <Image
-        style={{width: 300, height: 300}}
-        source={require('./bloom.png')} />
+      <Image source={require('./flower1.gif')} style = {{height: 340, width: 400, resizeMode : 'stretch',}} />
 
       <Text style = {styles.whiteText}>
       Focus for {this.state.selectedTime} minutes
@@ -405,11 +420,14 @@ _onEndInput = () => {
 const HomeScreen = TabNavigator(
   {
   Timer: {screen: TimerScreen},
-  Progress: {screen: ProgressScreen,},
-  },
-  {
-  tabBarPosition: 'bottom',
-  animationEnabled: true,
+  History: {screen: ProgressScreen},
+  },{
+    tabBarOptions : {
+      style: {
+        backgroundColor: '#613b83',
+      }
+    }
+
 });
 
 
@@ -450,7 +468,7 @@ const styles = StyleSheet.create({
 
   sessionButton: {
     margin: 10,
-    backgroundColor: '#c0392b',
+    backgroundColor: '#613b83',
     borderRadius: 15,
     flex: .5,
     height: 60,
@@ -462,7 +480,7 @@ const styles = StyleSheet.create({
     width: 600,
     borderWidth: 0,
     color: 'white',
-    backgroundColor: '#c0392b',
+    backgroundColor: '#613b83',
     borderRadius: 1,
     justifyContent: 'center',
     alignItems: 'center',
