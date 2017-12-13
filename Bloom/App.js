@@ -1,26 +1,109 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, AppState, Slider,
-  Platform} from 'react-native';
-//local database    .
+  Platform, AppRegistry} from 'react-native';
+import { StackNavigator } from 'react-navigation';
+import { withMappedNavigationProps as mapProps} from 'react-navigation-props-mapper';
+//session object
+import {Session} from './session';
+
+  //local database    .
 //var db = require('react-native-sqlite3');
 
 
 //----------------------------------------------------
 // Main App Component
 //----------------------------------------------------
-//containts main app state
+//containts info accessible to all other components in the app via props
+//
 export default class App extends React.Component {
   constructor(props){
     super(props);
+    this.state = {
+      //get these values from the DB when the app starts
+      totalSessions: 0,
+      totalSuccesses: 0,
+      totalFailures:0,
+      totalTime:0,
+      //Arr of session objects to display in results
+      sessionHistory: [],
+    };
   }
+
+  //method to record end of session
+  _recordSession = (session, success) => {
+
+    //incr total sessions
+    if (success) {
+      //incr totalSuccesses
+    }
+    else {
+      //incr totalFailures
+    }
+
+    //add session to sessionHistory
+
+    //add session.time to totalTime focused
+
+  }
+
+
   render() {
+    return (<SimpleApp
+    />);
+  }
+}
+
+
+//----------------------------------------------------
+// Login Component -- should change
+//----------------------------------------------------
+class LoginScreen extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {};
+  }
+
+  //----------------------------------------------------
+  //--------------login attempt 1 ----------------------
+  async logIn() {
+    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('1537482253004166', {
+        permissions: ['public_profile'],
+      });
+    if (type === 'success') {
+      // Get the user's name using Facebook's Graph API
+      const response = await fetch(
+        `https://graph.facebook.com/me?access_token=${token}`);
+      Alert.alert(
+        'Logged in!',
+        `Hi ${(await response.json()).name}!`,
+      );
+    }
+  }
+
+  static navigationOptions = {
+    title: 'Welcome to Bloom',
+  };
+  render() {
+    const { navigate } = this.props.navigation;
     return (
-      <View style={styles.container}>
-       <TimerScreen/>
+      <View>
+
+        <Button
+      onPress = {this.logIn.bind(this)}
+      title   = 'Login with Facebook'
+      />
+
+        <Button
+          onPress={() => navigate('Home')}
+          title="Go to Timer"
+        />
+
+
       </View>
     );
   }
 }
+
 
 //----------------------------------------------------
 // Timer Component
@@ -36,7 +119,6 @@ class TimerDraft extends React.Component {
 
     //count up to target time + then stop
     //interval for rerendering component
-
     this.interval = setInterval(() => {
       this.setState(previousState =>
       {
@@ -58,6 +140,7 @@ class TimerDraft extends React.Component {
 
   }
 
+  //before this component exits the screen, clear the timer
   componentWillUnmount(){
     clearInterval(this.interval);
   }
@@ -99,10 +182,9 @@ export class SessionButton extends React.Component {
   }
 }
 
-
-
-
-// Test component for getting started
+//-----------------------------------------------------
+// Main screen for session start + timing
+//-----------------------------------------------------
 export class TimerScreen extends React.Component {
   constructor(props) {
   super(props)
@@ -112,28 +194,14 @@ export class TimerScreen extends React.Component {
     inSession: false,
     accBuddyNumber: '',
     sessionSuccess: false,
-    sessionFailure: false
+    sessionFailure: false,
   }
   };
 
-
-  //----------------------------------------------------
-  //--------------login attempt 1 ----------------------
-
-  async logIn() {
-    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('1537482253004166', {
-        permissions: ['public_profile'],
-      });
-    if (type === 'success') {
-      // Get the user's name using Facebook's Graph API
-      const response = await fetch(
-        `https://graph.facebook.com/me?access_token=${token}`);
-      Alert.alert(
-        'Logged in!',
-        `Hi ${(await response.json()).name}!`,
-      );
-    }
-  }
+  //Data passed thru navigator
+  static navigationOptions = {
+    title: 'Timer Screen'
+  };
 
   //set inSession, sessionSuccess, sessioFailure to false
   _reset = () => {
@@ -157,7 +225,8 @@ export class TimerScreen extends React.Component {
   {
     console.log('App is in the background! User is distracted :( ')
     //call end session function --> send SMS
-    this._sendSMS(false);
+    //ENABLE FOR DEMO
+    //this._sendSMS(false);
     this._endSession(false);
 
   }
@@ -174,8 +243,12 @@ export class TimerScreen extends React.Component {
 //functions to start/end session when START/STOP button is pressed
 _handleSession = (pressed) => {
   if (pressed) {
-    this.setState({inSession: true,});
+
     //start new session and create new session object
+
+    //start session
+    this.setState({inSession: true,});
+
   }
   else{
     this.setState({inSession: false,});
@@ -190,14 +263,17 @@ _sendSMS = (success) => {
   //? 'http://10.8.173.153:55555/sms'
   //: 'http://localhost:55555/sms';
 
+  //successful message
   var SMS = 'http://10.8.173.153:55555/sms';
   if (!success){
+    //failure message
     SMS = 'http://10.8.173.153:55555/smsfail';
   }
 
   fetch(SMS)
   .then((response) => response.json())
   .catch((error) => {
+    //should display error on screen if SMS cannot be sent
     console.error(error);
   });
 }
@@ -215,6 +291,11 @@ _endSession = (success) => {
     this.setState({sessionFailure: true});
     this.setState({inSession: false})
   }
+
+  //create new Session object + update results
+
+
+
 }
 
 
@@ -225,6 +306,7 @@ _onTextChange = (number) => {
 }
 //After user has finished editing input, take final state
 _onEndInput = () => {
+  //save the accountability buddy's number
   console.log(this.state.accBuddyNumber);
 }
 
@@ -240,6 +322,7 @@ _onEndInput = () => {
     }
     //conditionally render session success message
     let victoryMsg = null;
+
     if(this.state.sessionSuccess){
       //HILAL: Change styles on this to make look big and nice
       victoryMsg = <Text style = {styles.whiteText}> Session Complete :) </Text>;
@@ -257,6 +340,8 @@ _onEndInput = () => {
       failureMsg = null;
     }
 
+    //for navigation
+    const { navigate } = this.props.navigation;
 
     return (
       <View style = {styles.container}>
@@ -296,12 +381,6 @@ _onEndInput = () => {
       inSession = {this.state.inSession}
       />
 
-      <Button
-      onPress = {this.logIn.bind(this)}
-      title   = 'Login Using The Facebook'
-      />
-
-
       <Text style = {styles.whiteText}> In Session = {this.state.inSession ? 'ACTIVE':'INACTIVE'} </Text>
       {timerField}
       {victoryMsg}
@@ -312,8 +391,18 @@ _onEndInput = () => {
 }
 
 
+//----------------------------------------------------
+// Navigation
+//----------------------------------------------------
+const SimpleApp = StackNavigator({
+  //list of screens in app
+  Login: {screen: LoginScreen},
+  Home: {screen: TimerScreen},
+});
 
-
+//----------------------------------------------------
+// Stylesheet classes
+//----------------------------------------------------
 const styles = StyleSheet.create({
   head: {
     fontSize: 40,
