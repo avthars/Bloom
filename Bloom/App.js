@@ -324,6 +324,9 @@ _sendSMS = (success) => {
 _endSession = (success) => {
   //end session
   this.setState({inSession: false});
+  
+  //create a flower everytime we end a session
+  putFlower('rose', success, Date.now(), 'Avthar', ['Hilal']);
 
   if (success){
     this.setState({sessionSuccess: true});
