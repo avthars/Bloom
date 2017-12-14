@@ -49,15 +49,16 @@ class LoginScreen extends React.Component {
       // Get the user's name using Facebook's Graph API
       const response = await fetch(
         `https://graph.facebook.com/me?access_token=${token}`);
-      /*Alert.alert(
+        /*Alert.alert('Logged in!', `Hi ${(await response.json()).name}!`,);*/
+        Alert.alert(
           'Logged in!',
-          Hi ${(await response.json()).name}!,
+          `Hi ${(await response.json()).name}!`,
           [
             {text: 'Logout', onPress: () => console.log('Logout Requested')},
             {text: 'Next', onPress: () => navigate('Home')},
           ],
           { cancelable: false }
-        ); */
+        );
     }
   }
 
