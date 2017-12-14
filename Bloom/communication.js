@@ -11,6 +11,9 @@ var API_ROOT = Platform.OS === 'android'
 ? 'http://10.8.68.109:55555/v1/'
 : 'http://localhost:55555/v1/';
 
+//API Root for avthar
+API_ROOT = 'http://10.8.173.153:55555/v1/'
+
 function checkStatus(res) {
   if (res.status >= 200 && res.status < 300) {
     return res;

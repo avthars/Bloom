@@ -108,7 +108,9 @@ class ProgressScreen extends React.Component {
   componentDidMount(){
     var that = this;
     //get all flowers from database
-    return fetch('http://10.8.68.109:55555/v1/flowers')
+    //shefali: http://10.8.68.109:55555/v1/flowers
+
+    return fetch('http://10.8.173.153:55555/v1/flowers')
     .then((res) => res.json())
     .then((resJson) => {
       that.setState({
@@ -258,7 +260,7 @@ export class TimerScreen extends React.Component {
     console.log('App is in the background! User is distracted :( ')
     //call end session function --> send SMS
     //ENABLE FOR DEMO
-    //this._sendSMS(false);
+    this._sendSMS(false);
     this._endSession(false);
 
   }
