@@ -41,6 +41,7 @@ class LoginScreen extends React.Component {
   //----------------------------------------------------
   //--------------login attempt 1 ----------------------
   async logIn() {
+    const { navigate } = this.props.navigation;
     const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('1537482253004166', {
         permissions: ['public_profile', 'email', 'user_friends'],
       });
@@ -49,9 +50,14 @@ class LoginScreen extends React.Component {
       const response = await fetch(
         `https://graph.facebook.com/me?access_token=${token}`);
       Alert.alert(
-        'Logged in!',
-        `Hi ${(await response.json()).name}!`,
-      );
+          'Logged in!',
+          Hi ${(await response.json()).name}!,
+          [
+            {text: 'Logout', onPress: () => console.log('Logout Requested')},
+            {text: 'Next', onPress: () => navigate('Home')},
+          ],
+          { cancelable: false }
+        );
     }
   }
 
@@ -281,6 +287,7 @@ _handleSession = (pressed) => {
     //start new session and create new session object
 
     //start session
+    this.setState({sessionSuccess: false,});
     this.setState({inSession: true,});
 
   }
