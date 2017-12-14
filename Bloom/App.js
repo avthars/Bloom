@@ -12,8 +12,8 @@ import {putFlower, registerUser, getFlowers} from './communication.js';
 //var db = require('react-native-sqlite3');
 
 //put two flowers into DB
-//putFlower('rose', true, Date.now(), 'Avthar', ['Hilal']);
-//putFlower('dead', false, Date.now(), 'Avthar', ['Shefali']);
+putFlower('rose', true, Date.now(), 'Avthar', ['Hilal']);
+putFlower('dead', false, Date.now(), 'Avthar', ['Shefali']);
 
 //----------------------------------------------------
 // Main App Component
@@ -49,7 +49,7 @@ class LoginScreen extends React.Component {
       // Get the user's name using Facebook's Graph API
       const response = await fetch(
         `https://graph.facebook.com/me?access_token=${token}`);
-      Alert.alert(
+      /*Alert.alert(
           'Logged in!',
           Hi ${(await response.json()).name}!,
           [
@@ -57,7 +57,7 @@ class LoginScreen extends React.Component {
             {text: 'Next', onPress: () => navigate('Home')},
           ],
           { cancelable: false }
-        );
+        ); */
     }
   }
 
