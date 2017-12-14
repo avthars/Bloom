@@ -12,8 +12,8 @@ import {putFlower, registerUser, getFlowers} from './communication.js';
 //var db = require('react-native-sqlite3');
 
 //put two flowers into DB
-putFlower('rose', true, 'Avthar', 'Hilal');
-putFlower('dead', false, 'Avthar', 'Shefali');
+//putFlower('rose', true, Date.now(), 'Avthar', ['Hilal']);
+//putFlower('dead', false, Date.now(), 'Avthar', ['Shefali']);
 
 //----------------------------------------------------
 // Main App Component
@@ -60,7 +60,7 @@ class LoginScreen extends React.Component {
     /*title: 'Bloom',*/
     headerTintColor: 'black',
     BackgroundColor: 'black',
-    header: null 
+    header: null
   };
 
   render() {
@@ -70,7 +70,7 @@ class LoginScreen extends React.Component {
 
        <Text style = {styles.head}> Bloom </Text>
     <Text style = {styles.desc}> The Focus and Accountability App</Text>
-    
+
      <Text style = {styles.head}>  </Text>
       <Image source={require('./flower2.gif')} style = {{height: 340, width: 400, resizeMode : 'stretch',}} />
          <Text style = {styles.head}>  </Text>
@@ -99,25 +99,30 @@ class LoginScreen extends React.Component {
 class ProgressScreen extends React.Component {
   constructor(props){
     super(props);
-    this.state = {};
+    this.state = {
+      flowers: []
+    };
   }
 
   //when component has mounted, get the flowers
-  componentWillMount(){
-    //put a flower into the DB
-    //get all flowers for test
-    console.log('willMount');
-    flowers = getFlowers();
-    //console.log(strings);
-    //console.log('Heres some flowers');
-    console.log(JSON.stringify(flowers));
+  componentDidMount(){
+    var that = this;
+    //get all flowers from database
+    return fetch('http://10.8.68.109:55555/v1/flowers')
+    .then((res) => res.json())
+    .then((resJson) => {
+      that.setState({
+        flowers: resJson.flowers
+      })
+    })
+    .catch((err) => console.log(err));
   }
-  
+
   static navigationOptions = {
     /*title: 'Bloom',*/
     headerTintColor: 'black',
     BackgroundColor: 'black',
-    header: null 
+    header: null
   };
 
   render(){
@@ -125,6 +130,7 @@ class ProgressScreen extends React.Component {
       <View style = {styles.container}>
       <Text style = {styles.head}> Bloom </Text>
       <Text style = {styles.desc}> Your Progress</Text>
+      <Text style = {styles.desc}>{JSON.stringify(this.state.flowers)}</Text>
       </View>
     );
   }
@@ -228,7 +234,7 @@ export class TimerScreen extends React.Component {
     title: 'Focus',
     header: null
   };
-  
+
   //set inSession, sessionSuccess, sessioFailure to false
   _reset = () => {
     this.setState({inSession: false});
@@ -371,7 +377,7 @@ _onEndInput = () => {
 
     return (
       <View style = {styles.container}>
- 
+
       <TextInput
       style = {styles.numberInput}
       placeholder = "Accountability Buddy's Phone #"

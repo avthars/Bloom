@@ -6,14 +6,24 @@
 
 import { Platform } from 'react-native';
 
-// adds a flower to the database
-export const putFlower = (variety, complete, fromUser, toUser) => {
-  var API = Platform.OS === 'android'
-  ? 'http://10.9.9.30:55555/v1/flowers'
-  : 'http://localhost:55555/v1/flowers';
+var MSEC_IN_MIN = 60000.0;
+var API_ROOT = Platform.OS === 'android'
+? 'http://10.8.68.109:55555/v1/'
+: 'http://localhost:55555/v1/';
 
-   //temp overwrite for Avthar's computer
-   API = 'http://10.8.173.153:55555/v1/flowers'
+function checkStatus(res) {
+  if (res.status >= 200 && res.status < 300) {
+    return res;
+  } else {
+    let err = new Error(res.statusText);
+    err.response = res;
+    throw error;
+  }
+}
+
+// adds a flower to the database
+export const putFlower = (variety, complete, startTime, userID, recipients) => {
+  var API = API_ROOT + "flowers";
 
   fetch(API, {
     method: 'POST',
@@ -24,8 +34,10 @@ export const putFlower = (variety, complete, fromUser, toUser) => {
     body: JSON.stringify({
       variety: variety,
       complete: complete,
-      from: fromUser,
-      to: toUser,
+      startTime: startTime,
+      minutes: Math.abs(startTime - Date.now()) / MSEC_IN_MIN,
+      userID: userID,
+      recipients: recipients
     })
   })
   .then((res) => res.json())
@@ -36,13 +48,8 @@ export const putFlower = (variety, complete, fromUser, toUser) => {
 
 // registers a user with the database
 export const registerUser = (username) => {
-  var API = Platform.OS === 'android'
-  ? 'http://10.9.9.30:55555/v1/users'
-  : 'http://localhost:55555/v1/users';
+  var API = API_ROOT + "users";
 
-  //temp overwrite for Avthar's computer
-  API = 'http://10.8.173.153:55555/v1/flowers'
-  
   fetch(API, {
     method: 'POST',
     headers: {
@@ -54,6 +61,9 @@ export const registerUser = (username) => {
     })
   })
   .then((res) => res.json())
+  .then((resJson) => {
+    return resJson.message;
+  })
   .catch((err) => {
     console.error(err);
   });
@@ -61,16 +71,14 @@ export const registerUser = (username) => {
 
 // returns all flowers in JSON
 export const getFlowers = () => {
-  var API = Platform.OS === 'android'
-  ? 'http://10.9.9.30:55555/v1/flowers'
-  : 'http://localhost:55555/v1/flowers';
-
-  //temp overwrite for Avthar's computer
-  API = 'http://10.8.173.153:55555/v1/flowers'
+  var API = API_ROOT + "flowers";
 
   fetch(API)
-  .then(function(res) {
-    return res.json()
+  .then((res) => res.json())
+  .then((resJson) => {
+    //console.log(resJson);
+    console.log("received flowers!");
+    return resJson.flowers
   })
   .catch((err) => {
     console.error(err);
