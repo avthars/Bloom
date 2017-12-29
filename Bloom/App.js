@@ -336,7 +336,7 @@ _sendPhoneNum = (phoneNum, name) => {
     }),
   })
   .then((response) => response.json())
-  .then((responseJson) => {
+  .then((response) => {
     //print out
     console.log("Server returned this:");
     console.log(responseJson);
@@ -382,7 +382,7 @@ _onEndInput = () => {
   console.log("Acc buddy phone number:")
   console.log(this.state.accBuddyNumber);
   //send entered number to server
-  this._sendPhoneNum(this.state.accBuddyNumber, 'Avthar');
+  this._sendPhoneNum(this.state.accBuddyNumber, 'Felix');
 }
 
   render(){
