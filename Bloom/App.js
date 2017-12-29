@@ -11,6 +11,7 @@ import {putFlower, registerUser, getFlowers} from './communication.js';
   //local database    .
 //var db = require('react-native-sqlite3');
 
+
 //put two flowers into DB
 putFlower('rose', true, Date.now(), 'Avthar', ['Hilal']);
 putFlower('dead', false, Date.now(), 'Avthar', ['Shefali']);
@@ -320,6 +321,32 @@ _sendSMS = (success) => {
   });
 }
 
+_sendPhoneNum = (phoneNum, name) => {
+
+  var API = 'http://10.8.173.153:55555/abPhoneNumber';
+  fetch(API, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      accBuddyPhoneNumber: phoneNum,
+      accBuddyName: name,
+    }),
+  })
+  .then((response) => response.json())
+  .then((responseJson) => {
+    //print out
+    console.log("Server returned this:");
+    console.log(responseJson);
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+
+}
+
 //function that ends a session currently in progress
 _endSession = (success) => {
   //end session
@@ -344,7 +371,7 @@ _endSession = (success) => {
 }
 
 
-//Capture and save task associated with session
+//Capture and save phone number associated with session
 _onTextChange = (number) => {
   //console.log(task);
   this.setState({accBuddyNumber: number});
@@ -352,7 +379,10 @@ _onTextChange = (number) => {
 //After user has finished editing input, take final state
 _onEndInput = () => {
   //save the accountability buddy's number
+  console.log("Acc buddy phone number:")
   console.log(this.state.accBuddyNumber);
+  //send entered number to server
+  this._sendPhoneNum(this.state.accBuddyNumber, 'Avthar');
 }
 
   render(){
