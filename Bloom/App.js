@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, Video, TextInput, Button, TouchableOpacity, AppState, Slider,
-  Platform, AppRegistry, Alert} from 'react-native';
+  Platform, AppRegistry, Alert, FlatList} from 'react-native';
+import {List, ListItem} from 'react-native-elements';
 import { StackNavigator, TabNavigator, DrawerNavigator } from 'react-navigation';
 import { withMappedNavigationProps as mapProps} from 'react-navigation-props-mapper';
 //session object
@@ -10,7 +11,6 @@ import {putFlower, registerUser, getFlowers} from './communication.js';
 
   //local database    .
 //var db = require('react-native-sqlite3');
-
 
 //put two flowers into DB
 putFlower('rose', true, Date.now(), 'Avthar', ['Hilal']);
@@ -35,7 +35,7 @@ export default class App extends React.Component {
 // Login Component -- should change
 //----------------------------------------------------
 class LoginScreen extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {};
   }
@@ -103,12 +103,14 @@ class LoginScreen extends React.Component {
 //----------------------------------------------------
 // Progress Screen Component
 // shows user history and total stats
+// Uses react-native-elements List and ListItem, 
+// See docs for styling and implementation tips
 //----------------------------------------------------
 class ProgressScreen extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      flowers: []
+      flowers: [],
     };
   }
 
@@ -122,10 +124,18 @@ class ProgressScreen extends React.Component {
     .then((res) => res.json())
     .then((resJson) => {
       that.setState({
-        flowers: resJson.flowers
+        flowers: resJson.flowers,
       })
     })
     .catch((err) => console.log(err));
+  }
+
+  //individual item in the list
+  renderItemFunc = ({item}) => {
+    <ListItem
+    title = {item.variety}
+    subtitle = {item.complete ? 'Complete': 'Fail'}
+    />
   }
 
   static navigationOptions = {
@@ -135,12 +145,28 @@ class ProgressScreen extends React.Component {
     header: null
   };
 
+
+//TO do: figure out how to style stuff in this list properly
+// Display stats of user above session history
   render(){
+    console.log(this.state.flowers);
     return(
-      <View style = {styles.container}>
+      <View>
       <Text style = {styles.head}> Bloom </Text>
       <Text style = {styles.desc}> Your Progress</Text>
-      <Text style = {styles.desc}>{JSON.stringify(this.state.flowers)}</Text>
+      <List>
+        <FlatList
+        data = {this.state.flowers}
+        renderItem = {({item}) => (
+          <ListItem
+          title = {item.variety}
+          subtitle = {item.complete ? 'Complete': 'Fail'}
+          
+          />
+        )}
+        keyExtractor = {item => item._id}
+        />
+      </List>
       </View>
     );
   }
@@ -336,7 +362,7 @@ _sendPhoneNum = (phoneNum, name) => {
     }),
   })
   .then((response) => response.json())
-  .then((response) => {
+  .then((responseJson) => {
     //print out
     console.log("Server returned this:");
     console.log(responseJson);
@@ -505,7 +531,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-
   whiteText: {
     fontSize: 16,
     textAlign: 'center',
