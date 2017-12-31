@@ -198,7 +198,7 @@ class TimerDraft extends React.Component {
         //call session complete function
         //this.props.sessionComplete(true)
         this.props.endSession(true);
-        this.props.sendSMS(true);
+        //this.props.sendSMS(true);
         return {elapsedTime: this.state.targetTime};
        }
       });
@@ -294,7 +294,7 @@ export class TimerScreen extends React.Component {
     console.log('App is in the background! User is distracted :( ')
     //call end session function --> send SMS
     //ENABLE FOR DEMO
-    this._sendSMS(false);
+    //this._sendSMS(false);
     this._endSession(false);
 
   }
