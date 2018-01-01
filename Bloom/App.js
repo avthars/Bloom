@@ -61,7 +61,7 @@ class LoginScreen extends React.Component {
   async logIn() {
     
     const { navigate } = this.props.navigation;
-    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('134532247216837', {
+    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('1537482253004166', {
         permissions: ['public_profile', 'email', 'user_friends'],
       });
     if (type === 'success') {
