@@ -37,31 +37,60 @@ export default class App extends React.Component {
 class LoginScreen extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      loggedIn: false,
+      id: '',
+      name: '',
+      pic: ''
+    };
   }
+
+  logOut(){
+     this.setState({
+      loggedIn: false,
+      id: '',
+      name: '',
+      pic: ''
+     })
+  }
+
   //----------------------------------------------------
-  //--------------login attempt 1 ----------------------
+  //--------------login  ----------------------
+  //----------------------------------------------------
+  //--------------login attempt  ----------------------
   async logIn() {
+    
     const { navigate } = this.props.navigation;
-    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('1537482253004166', {
+    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('134532247216837', {
         permissions: ['public_profile', 'email', 'user_friends'],
       });
     if (type === 'success') {
+      this.setState({
+        loggedIn: true
+      })
       // Get the user's name using Facebook's Graph API
       const response = await fetch(
-        `https://graph.facebook.com/me?access_token=${token}`);
-        Alert.alert('Logged in!', `Hi ${(await response.json()).name}!`,);
-        /*Alert.alert(
+        `https://graph.facebook.com/me?access_token=${token}&fields=id,name,email,picture`);
+        // Alert.alert('Logged in!', `Hi ${(await response.json()).name}!`,);
+      const profile = await response.json();
+      // still figuring out how to get and render the profile picture
+      this.setState({
+        id: profile.id,
+        name: profile.name,
+        pic: profile.picture.data.url
+      })
+        Alert.alert(
           'Logged in!',
-          `Hi ${(await response.json()).name}!`,
+          `Hi ${profile.name}!`,
           [
             {text: 'Logout', onPress: () => console.log('Logout Requested')},
             {text: 'Next', onPress: () => navigate('Home')},
           ],
           { cancelable: false },
-        );*/
+        );
     }
   }
+
 
   //nav data: title of screen
   static navigationOptions = {
