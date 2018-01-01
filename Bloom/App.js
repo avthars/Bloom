@@ -73,13 +73,15 @@ class LoginScreen extends React.Component {
         `https://graph.facebook.com/me?access_token=${token}&fields=id,name,email,picture`);
         // Alert.alert('Logged in!', `Hi ${(await response.json()).name}!`,);
       const profile = await response.json();
+      console.log("Data from fb profile");
+      console.log(profile);
       // still figuring out how to get and render the profile picture
       this.setState({
         id: profile.id,
         name: profile.name,
         pic: profile.picture.data.url
-      })
-        Alert.alert(
+      });
+      Alert.alert(
           'Logged in!',
           `Hi ${profile.name}!`,
           [
@@ -91,6 +93,10 @@ class LoginScreen extends React.Component {
     }
   }
 
+  componentWillUpdate(){
+    console.log("printing state upon exit");
+    console.log(this.state);
+}
 
   //nav data: title of screen
   static navigationOptions = {
