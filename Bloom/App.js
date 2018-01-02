@@ -39,18 +39,19 @@ class LoginScreen extends React.Component {
     super(props);
     this.state = {
       loggedIn: false,
-      id: '',
-      name: '',
-      pic: ''
+      fbid: '',
+      fbname: '',
+      fbpic: '',
+      userid: '',
     };
   }
 
   logOut(){
      this.setState({
       loggedIn: false,
-      id: '',
-      name: '',
-      pic: ''
+      fbid: '',
+      fbname: '',
+      fbpic: '',
      })
   }
 
@@ -59,14 +60,13 @@ class LoginScreen extends React.Component {
   //----------------------------------------------------
   //--------------login attempt  ----------------------
   async logIn() {
-    
     const { navigate } = this.props.navigation;
     const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('1537482253004166', {
         permissions: ['public_profile', 'email', 'user_friends'],
       });
     if (type === 'success') {
       this.setState({
-        loggedIn: true
+        loggedIn: true,
       })
       // Get the user's name using Facebook's Graph API
       const response = await fetch(
@@ -76,14 +76,18 @@ class LoginScreen extends React.Component {
       console.log("Data from fb profile");
       console.log(profile);
       // still figuring out how to get and render the profile picture
+      // register this user with the DB and get their userid
+      let userid = await this.registerUserAndGetUserID(profile.name, profile.id, profile.picture.data.url);
+      //set app state with values from FB and DB
       this.setState({
-        id: profile.id,
-        name: profile.name,
-        pic: profile.picture.data.url
+        fbid: profile.id,
+        fbname: profile.name,
+        fbpic: profile.picture.data.url,
+        userid: userid,
       });
       Alert.alert(
           'Logged in!',
-          `Hi ${profile.name}!`,
+          `Hi ${profile.name}! Your userID is ${userid}`,
           [
             {text: 'Logout', onPress: () => console.log('Logout Requested')},
             {text: 'Next', onPress: () => navigate('Home')},
@@ -93,8 +97,35 @@ class LoginScreen extends React.Component {
     }
   }
 
+  //register user and get unique userid
+  async registerUserAndGetUserID(fbname, fbid, fbProfilePicURL) {
+    try {
+      let API_ROOT = 'http://10.8.173.153:55555/v1';
+      let response = await fetch(API_ROOT+'/users/register', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fbname: fbname,
+          fbid: fbid,
+          fbProfilePicURL: fbProfilePicURL,
+        }),
+      });
+      //userID corresponds to key message: userid
+      let responseJson = await response.json()
+      console.log("USER obj FROM DB:")
+      console.log(responseJson);
+      let userid = responseJson.userid;
+      return userid
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   componentWillUpdate(){
-    console.log("printing state upon exit");
+    console.log("printing state upon update");
     console.log(this.state);
 }
 
