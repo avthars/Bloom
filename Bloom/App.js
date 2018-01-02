@@ -13,8 +13,8 @@ import {putFlower, registerUser, getFlowers} from './communication.js';
 //var db = require('react-native-sqlite3');
 
 //put two flowers into DB
-putFlower('rose', true, Date.now(), 'Avthar', ['Hilal']);
-putFlower('dead', false, Date.now(), 'Avthar', ['Shefali']);
+//putFlower('rose', true, Date.now(), 'Avthar', ['Hilal']);
+//putFlower('dead', false, Date.now(), 'Avthar', ['Shefali']);
 
 //----------------------------------------------------
 // Main App Component
@@ -154,6 +154,7 @@ class ProgressScreen extends React.Component {
     var that = this;
     //get all flowers from database
     //shefali: http://10.8.68.109:55555/v1/flowers
+    //avthar: http://10.8.173.153:55555/v1/flowers
 
     return fetch('http://10.8.173.153:55555/v1/flowers')
     .then((res) => res.json())
@@ -414,7 +415,7 @@ _endSession = (success) => {
   this.setState({inSession: false});
   
   //create a flower everytime we end a session
-  putFlower('rose', success, Date.now(), 'Avthar', ['Hilal']);
+  //putFlower('rose', success, Date.now(), 'Avthar', ['Hilal']);
 
   if (success){
     this.setState({sessionSuccess: true});
