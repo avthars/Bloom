@@ -50,9 +50,9 @@ class LoginScreen extends React.Component {
   }
 
   //----------------------------------------------------
-  //--------------login  ----------------------
+  // Function that logs user in on facebook
+  // and gets user data from fb login
   //----------------------------------------------------
-  //--------------login attempt  ----------------------
   async logIn() {
     const { navigate } = this.props.navigation;
     const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync('1537482253004166', {
