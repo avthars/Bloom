@@ -352,15 +352,13 @@ export class TimerScreen extends React.Component {
   //functions for internal App state
   componentDidMount() {
     //check what was passed in navigation
-   console.log('component didMound -- we got this from navProps:');
    const stuff = {fbid, fbname, userid, fbpic} = this.props.navigation.state.params;
    
    //update state from stuff in LoginScreen
    this.setState({fbname: stuff.fbname, 
     fbid: stuff.fbid, 
     fbpic: stuff.fbpic,
-    userid: stuff.userid,
-  }, () => {
+    userid: stuff.userid,}, () => {
     console.log("State after getting stuff from login");
     console.log(this.state);
   });
