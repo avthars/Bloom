@@ -320,7 +320,7 @@ export class TimerScreen extends React.Component {
   { selectedTime: 1,
     appState: AppState.currentState,
     inSession: false,
-    accBuddyName: 'Felix',
+    accBuddyName: '',
     accBuddyNumber: '',
     sessionSuccess: false,
     sessionFailure: false,
@@ -426,6 +426,7 @@ _onEndInput = () => {
   //save the accountability buddy's number
   console.log("Acc buddy phone number:")
   console.log(this.state.accBuddyNumber);
+  this.setState({accBuddyName: 'Felix'}, () => {console.log('accBuddyName:' + this.state.accBuddyName);});
   //send entered number to server
   //this._sendPhoneNum(this.state.accBuddyNumber, 'Felix');
 }

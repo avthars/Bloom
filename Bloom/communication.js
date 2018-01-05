@@ -51,11 +51,11 @@ export const putFlower =(complete, userName, fbid, buddyName, buddyNumber,variet
       userID: userID,
     })
   })
-  .then((res) => {
-    let resJson = res.json();
-    let msg = resJson.message;
-    console.log("return of putFlower:");
-    console.log(msg);
+  .then((res) => res.json())
+  .then((resJson) => {
+    //console.log(resJson);
+    console.log("Message back from server!");
+    console.log(resJson.message);
   })
   .catch((err) => {
     console.error(err);
