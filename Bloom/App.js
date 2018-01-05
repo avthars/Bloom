@@ -78,16 +78,18 @@ class LoginScreen extends React.Component {
         fbname: profile.name,
         fbpic: profile.picture.data.url,
         userid: userid,
-      });
-      Alert.alert(
-          'Logged in!',
-          `Hi ${profile.name}! Your userID is ${userid}`,
-          [
-            {text: 'Logout', onPress: () => console.log('Logout Requested')},
-            {text: 'Next', onPress: () => navigate('Home')},
-          ],
-          { cancelable: false },
-        );
+      }, () => {
+        //only display this after state has updated
+        Alert.alert(
+        'Logged in!',
+        `Hi ${profile.name}! Your userID is ${userid}`,
+        [
+          {text: 'Logout', onPress: () => console.log('Logout Requested')},
+          {text: 'Next', onPress: () => navigate('Home')},
+        ],
+        { cancelable: false },
+      );});
+      
     }
   }
 
