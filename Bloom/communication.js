@@ -7,11 +7,14 @@
 import { Platform } from 'react-native';
 
 var MSEC_IN_MIN = 60000.0;
-var API_ROOT = Platform.OS === 'android'
+/* var API_ROOT = Platform.OS === 'android'
 ? 'http://10.8.68.109:55555/v1/'
-: 'http://localhost:55555/v1/';
+: 'http://localhost:55555/v1/'; */
 
-//API Root for avthar
+//API Root for avthar's loalhost
+//change when server is migrated to clouds
+//shefali
+// API_ROOT = 'http://10.8.68.109:55555/v1/'
 API_ROOT = 'http://10.8.173.153:55555/v1/'
 
 function checkStatus(res) {
@@ -24,10 +27,11 @@ function checkStatus(res) {
   }
 }
 
-// adds a flower to the database
-export const putFlower = (variety, complete, startTime, userID, recipients) => {
+// sends flower info to the server to be added to the DB
+// will also send notifiation to buddyNumber sent in request
+export const putFlower =(complete, userName, fbid, buddyName, buddyNumber,variety, endTime, minutes, sessionLength, userID) => 
+{
   var API = API_ROOT + "flowers";
-
   fetch(API, {
     method: 'POST',
     headers: {
@@ -35,21 +39,31 @@ export const putFlower = (variety, complete, startTime, userID, recipients) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      variety: variety,
       complete: complete,
-      startTime: startTime,
-      minutes: Math.abs(startTime - Date.now()) / MSEC_IN_MIN,
+      userName: userName,
+      fbid: fbid,
+      buddyName: buddyName,
+      buddyNumber: buddyNumber,
+      variety: variety,
+      endTime: endTime,
+      minutes: minutes,
+      sessionLength: sessionLength,
       userID: userID,
-      recipients: recipients
     })
   })
-  .then((res) => res.json())
+  .then((res) => {
+    let resJson = res.json();
+    let msg = resJson.message;
+    console.log("return of putFlower:");
+    console.log(msg);
+  })
   .catch((err) => {
     console.error(err);
   });
 }
 
 // registers a user with the database
+//not used, see registerUserAndGetUserId function in Login page
 export const registerUser = (username) => {
   var API = API_ROOT + "users";
 
