@@ -85,11 +85,10 @@ class LoginScreen extends React.Component {
         `Hi ${profile.name}! Your userID is ${userid}`,
         [
           {text: 'Logout', onPress: () => console.log('Logout Requested')},
-          {text: 'Next', onPress: () => navigate('Home')},
+          {text: 'Next', onPress: () => navigate('Home', {fbid: this.state.fbid, fbname: this.state.fbname, userid: this.state.userid, fbpic: this.state.fbpic})},
         ],
         { cancelable: false },
       );});
-      
     }
   }
 
@@ -121,8 +120,8 @@ class LoginScreen extends React.Component {
   }
 
   componentWillUpdate(){
-    console.log("printing state upon update");
-    console.log(this.state);
+    //console.log("printing state upon update");
+    //console.log(this.state);
 }
 
   //nav data: title of screen
@@ -317,7 +316,7 @@ export class SessionButton extends React.Component {
 //-----------------------------------------------------
 export class TimerScreen extends React.Component {
   constructor(props) {
-  super(props)
+  super(props);
   this.state =
   { selectedTime: 1,
     appState: AppState.currentState,
@@ -327,10 +326,10 @@ export class TimerScreen extends React.Component {
     sessionSuccess: false,
     sessionFailure: false,
     //get the following from the state in LoginScreen
-    fbname: 'Random fb Name',
-    fbid: 'fbid1',
-    userid: 'dummyuserid',
-
+    fbname: 'Facebook Name',
+    fbid: 'dbid1',
+    userid: 'randomid',
+    fbpic: '',
   }
   };
 
@@ -347,8 +346,25 @@ export class TimerScreen extends React.Component {
     this.setState({sessionSuccess: false});
   }
 
+  componentDidUpdate(){
+  }
+
   //functions for internal App state
   componentDidMount() {
+    //check what was passed in navigation
+   console.log('component didMound -- we got this from navProps:');
+   const stuff = {fbid, fbname, userid, fbpic} = this.props.navigation.state.params;
+   
+   //update state from stuff in LoginScreen
+   this.setState({fbname: stuff.fbname, 
+    fbid: stuff.fbid, 
+    fbpic: stuff.fbpic,
+    userid: stuff.userid,
+  }, () => {
+    console.log("State after getting stuff from login");
+    console.log(this.state);
+  });
+
     AppState.addEventListener('change', this._handleAppStateChange);
   }
 
