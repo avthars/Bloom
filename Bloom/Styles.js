@@ -10,18 +10,18 @@ import {StyleSheet} from 'react-native';
 //----------------------------------------------------
 export const styles = StyleSheet.create({
     head: {
-      fontSize: 40,
-      textAlign: 'center',
+      fontSize: 30,
+      textAlign: 'left',
       color: '#fff',
       marginTop: 20,
       justifyContent: 'space-between',
     },
-    container: {
-      flex: 1,
-      backgroundColor: '#000',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
+    //container: {
+    //  flex: 1,
+    //  backgroundColor: '#000',
+    //  alignItems: 'center',
+    //  justifyContent: 'center',
+    //},
     whiteText: {
       fontSize: 16,
       textAlign: 'center',
@@ -32,25 +32,15 @@ export const styles = StyleSheet.create({
   
     sessionButton: {
       margin: 10,
-      backgroundColor: '#613b83',
-      borderRadius: 15,
-      flex: .5,
-      height: 60,
-      justifyContent: 'center',
-    },
-  
-    numberInput: {
-      height: 40,
-      width: 600,
+      height: 50,
+      width: 250,
       borderWidth: 0,
-      color: 'white',
-      backgroundColor: '#613b83',
-      borderRadius: 1,
+      backgroundColor: '#2ecc71',
+      borderRadius: 5,
       justifyContent: 'center',
       alignItems: 'center',
-      fontSize: 16,
-      textAlign: 'center',
     },
+
     desc: {
       height: 40,
       width: 600,
@@ -62,6 +52,65 @@ export const styles = StyleSheet.create({
       fontSize: 16,
       textAlign: 'center',
     },
+
+    container: {
+      flex: 1,
+      //marginLeft: 20,
+      //marginRight: 20, // needs some tweaking
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: '#2c3e50',
+    },
+    paragraph: {
+      margin: 24,
+      fontSize: 40,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      color: '#27ae60',
+    },
+    space: {
+      margin: 5,
+      fontSize: 5,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      color: '#27ae60',
+    },
+    timer: {
+      margin: 24,
+      fontSize: 50,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      color: '#ecf0f1',
+    },
+  
+    numberInput: {
+      height: 35,
+      width: 250,
+      borderWidth: 0,
+      color: '#fff',
+      backgroundColor: '#d35400',
+      borderRadius: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      fontSize: 16,
+      fontWeight: 'bold',
+      textAlign: 'center',
+    },
+  });
+  
+  var sliderStyles = StyleSheet.create({
+    track: {
+      width: 250,
+      height: 30,
+      borderRadius: 5,
+      backgroundColor: '#d0d0d0',
+    },
+    thumb: {
+      width: 10,
+      height: 40,
+      borderRadius: 5,
+      backgroundColor: '#eb6e1b',
+    }
   
   
   });

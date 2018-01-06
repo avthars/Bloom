@@ -4,12 +4,19 @@
 // is main screen user interacts with in the app
 //----------------------------------------------------
 import React, { Component } from 'react';
-import {Text, View, Image, Video, TextInput, Button, TouchableOpacity, AppState, Slider,
+import {Text, View, Image, Video, TextInput, Button, TouchableOpacity, AppState,
   Platform, AppRegistry, Alert, FlatList} from 'react-native';
 //functions to interface with server and DB
 import {putFlower, getFlowers} from './communication.js';
 //style sheet
-import {styles} from './Styles';
+import {styles, slider} from './Styles';
+
+
+// NEW UI
+import {StyleSheet} from 'react-native';
+import Slider from "react-native-slider";
+import { AnimatedCircularProgress } from 'react-native-circular-progress';
+
 
 //-----------------------------------------------------
 // Main screen for session start + timing
@@ -18,7 +25,7 @@ export default class TimerScreen extends React.Component {
     constructor(props) {
     super(props);
     this.state =
-    { selectedTime: 1,
+    { 
       appState: AppState.currentState,
       inSession: false,
       accBuddyName: '',
@@ -30,6 +37,14 @@ export default class TimerScreen extends React.Component {
       fbid: 'dbid1',
       userid: 'randomid',
       fbpic: '',
+
+      // CIRCULAR TIMER 
+      countDown : false,
+      remainingSeconds : 20 * 60,
+      interval : null,
+      sliderValue : 1200,
+      fill : 0,
+      tint : "#2ecc71",
     }
     };
   
@@ -99,9 +114,11 @@ export default class TimerScreen extends React.Component {
   
       //start session
       this.setState({sessionSuccess: false, inSession: true});
+      this.handleStart()
     }
     else{
       this.setState({inSession: false,});
+      this.handleStop()
       //end a current session and don't send feedback to user
     }
   }
@@ -128,6 +145,7 @@ export default class TimerScreen extends React.Component {
     }
     else {
       this.setState({sessionFailure: true});
+      this.handleStop()
     }
   }
   
@@ -147,15 +165,95 @@ export default class TimerScreen extends React.Component {
     //this._sendPhoneNum(this.state.accBuddyNumber, 'Felix');
   }
   
+
+  // -------------------------|
+  // CIRCULAR TIMER FUNCTIONS |
+  // -------------------------|
+
+    handleStart() {
+      this.refs.circularProgress.performLinearAnimation(100, this.state.remainingSeconds * 1000); 
+      var ival = setInterval(() => {
+        if ((this.state.remainingSeconds > 0) && this.state.countDown) {
+          this.setState(prevState => {
+            return {remainingSeconds : prevState.remainingSeconds - 1};
+          });
+        }
+      }, 1000);
+
+      this.setState(prevState => {
+        return {
+          remainingSeconds : prevState.remainingSeconds, 
+          countDown : true,
+          interval : ival,
+          tint : "#2ecc71",
+          backgroundColor : "#3d5875",
+        };
+      });
+    }
+
+    handleStop() {
+      this.refs.circularProgress.performLinearAnimation(100, 0); 
+      clearInterval(this.state.interval);
+      this.setState(prevState => {
+        return {
+          remainingSeconds : prevState.remainingSeconds,
+          countDown : false,
+          interval : null,
+          tint : "#e74c3c",
+          fill : 0,
+        };
+      });
+    }
+
+    handleReset() {
+      clearInterval(this.state.interval);
+      this.setState(() => {
+        return {
+          remainingSeconds : 20 * 60, 
+          countDown : false,
+        };
+      });
+    }
+
+    formatRemainingSeconds(remainingSeconds) {
+      let numMinutes = Math.floor(remainingSeconds / 60);
+      let numSeconds = remainingSeconds % 60;
+      let formattedTime = "";
+
+      if (numMinutes.toString().length == 1) {
+        formattedTime += '0';
+        formattedTime += numMinutes.toString();
+      } else {
+        formattedTime += numMinutes.toString();
+      }
+
+      formattedTime += ":";
+
+      if (numSeconds.toString().length == 1) {
+        formattedTime += '0';
+        formattedTime += numSeconds.toString();
+      } else {
+        formattedTime += numSeconds.toString();
+      }
+
+      return formattedTime;
+    }
+  // -------------------------|
+
+
     render(){
       //conditionally render time elapsed in session
       let timerField = null;
       if (this.state.inSession){
         timerField = <TimerDraft
         inSession  = {this.props.inSession}
-        targetTime = {this.state.selectedTime*60}
-        endSession = {this._endSession}
-        sendSMS    = {this._sendSMS}/>;
+
+        targetTime = {60}
+        // WHAT IT SHOULD BE: remainingSeconds  --> not working tho for reason stated below    vvv
+
+        //targetTime = {this.state.remainingSeconds} // <--------- SLIGHT ISSUE HERE, THIS IS SET TO 20*60 SECONDS 
+        endSession = {this._endSession}              //            INITIALLY AND DOES NOT UPDATE TO SELECTED TIME
+        sendSMS    = {this._sendSMS}/>;              //            BY THE SLIDER, GOTTA UPDATE IT AS SLIDER CHANGES
       }
       //conditionally render session success message
       let victoryMsg = null;
@@ -183,33 +281,69 @@ export default class TimerScreen extends React.Component {
       return (
         <View style = {styles.container}>
   
-        <TextInput
-        style = {styles.numberInput}
-        placeholder = "Accountability Buddy's Phone #"
-        placeholderTextColor = 'lightgray'
-        returnKeyType = 'done'
-        keyboardType = 'number-pad'
-        onChangeText = {this._onTextChange}
-        onEndEditing = {this._onEndInput}
-        value = {this.state.accBuddyNumber}
-        />
-  
-        <Image source={require('./flower1.gif')} style = {{height: 340, width: 400, resizeMode : 'stretch',}} />
-  
-        <Text style = {styles.whiteText}>
-        Focus for {this.state.selectedTime} minutes
+
+        <Text style={styles.paragraph}>
+          Bloom
         </Text>
-  
+
+        <AnimatedCircularProgress
+          ref='circularProgress'
+          size={240}
+          width={25}
+          fill={this.state.fill}
+          tintColor={this.state.tint}
+          backgroundColor="#3d5875"
+          >
+          {
+            (fill) => (
+              <Text style={styles.timer}> 
+                {this.formatRemainingSeconds(this.state.remainingSeconds)} 
+              </Text>
+            )
+          }
+        </AnimatedCircularProgress>
+
+        <Text style={styles.space}>   </Text>
+        <Text style={styles.space}>   </Text>
+        <Text style={styles.space}>   </Text>
+
+        <TextInput                              //  <--- NEEDS FIXING (SAVE INPUT AND USE IT)
+          style = {styles.numberInput}
+          placeholder = "Partner's Name"
+          placeholderTextColor = 'lightgray'
+          returnKeyType = 'done'
+          onEndEditing = {this._onEndInput}
+          value = {this.state.accBuddyName}
+        />
+
+        <Text style={styles.space}>   </Text>
+
+
+        <TextInput
+          style = {styles.numberInput}
+          placeholder = "Phone Number"
+          placeholderTextColor = 'lightgray'
+          returnKeyType = 'done'
+          keyboardType = 'number-pad'
+          maxLength = {10}
+          onChangeText = {this._onTextChange}
+          onEndEditing = {this._onEndInput}
+          value = {this.state.accBuddyNumber}
+        />
+        <Text style={styles.space}>   </Text>
+
         <Slider
-              style={{ width: 300 }}
-              step={0.5}
-              minimumValue={0.5}
-              maximumValue={5}
-              value={this.state.selectedTime}
-              //thumbTouchSize={width: 80, height: 80}
-              onValueChange={val => this.setState({selectedTime: val })}
-              />
-  
+          trackStyle={sliderStyles.track}
+          thumbStyle={sliderStyles.thumb}
+          minimumTrackTintColor='#eecba8'
+          minimumValue={ 1 * 60}
+          maximumValue={60 * 60}
+          step={60}
+          value={this.state.sliderValue}
+          //onValueChange={value => this.setState({ sliderValue : value })}
+          onValueChange={value => this.setState({ remainingSeconds : value })}
+        />
+
         <SessionButton
         handleSession = {this._handleSession}
         inSession = {this.state.inSession}
@@ -304,3 +438,17 @@ export class TimerDraft extends React.Component {
   
   
   
+  var sliderStyles = StyleSheet.create({
+    track: {
+      width: 250,
+      height: 30,
+      borderRadius: 5,
+      backgroundColor: '#d0d0d0',
+    },
+    thumb: {
+      width: 10,
+      height: 40,
+      borderRadius: 5,
+      backgroundColor: '#eb6e1b',
+    }
+  });

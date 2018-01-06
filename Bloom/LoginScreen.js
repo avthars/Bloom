@@ -83,7 +83,7 @@ export default class LoginScreen extends React.Component {
     //------------------------------------------------------
     async registerUserAndGetUserID(fbname, fbid, fbProfilePicURL) {
       try {
-        let API_ROOT = 'http://10.8.173.153:55555/v1';
+        let API_ROOT = 'http://10.0.0.144:55555/v1';
         let response = await fetch(API_ROOT+'/users/register', {
           method: 'POST',
           headers: {
@@ -123,26 +123,34 @@ export default class LoginScreen extends React.Component {
     render() {
       const { navigate } = this.props.navigation;
       return (
-        <View style = {styles.container}>
+        <View style = {{
+              flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: '#000',
+        }}>
   
-         <Text style = {styles.head}> Bloom </Text>
-      <Text style = {styles.desc}> The Focus and Accountability App</Text>
+        <Text style = {styles.paragraph}> Bloom </Text>
+        <Text style = {styles.desc}> The Focus and Accountability App</Text>
   
-       <Text style = {styles.head}>  </Text>
+        <Text style = {styles.head}>  </Text>
         <Image source={require('./flower2.gif')} style = {{height: 340, width: 400, resizeMode : 'stretch',}} />
            <Text style = {styles.head}>  </Text>
   
-          <Button
-        onPress = {this.logIn.bind(this)}
-        title   = 'Login with Facebook'
-        />
-  
-          <Button
+
+
+          <TouchableOpacity
+            style = {styles.sessionButton}
+            onPress = {this.logIn.bind(this)}
+            >
+            <Text style = {{color: 'white', textAlign: 'center', fontSize: 20, }}> Login with Facebook </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
             onPress={() => navigate('Home')}
-            title="skip"
-          />
-  
-  
+            >
+            <Text style = {{color: 'white', textAlign: 'center', fontSize: 16, }}> skip </Text>
+          </TouchableOpacity>
         </View>
       );
     }

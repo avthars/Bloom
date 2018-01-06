@@ -22,10 +22,9 @@ const HomeScreen = TabNavigator(
   },{
     tabBarOptions : {
       style: {
-        backgroundColor: '#613b83',
+        backgroundColor: '#27ae60',
       }
     }
-
 });
 
 //----------------------------------------------------

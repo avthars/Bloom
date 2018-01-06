@@ -30,8 +30,9 @@ export default class ProgressScreen extends React.Component {
       //get all flowers from database
       //shefali: http://10.8.68.109:55555/v1/flowers
       //avthar: http://10.8.173.153:55555/v1/flowers
+      //hilal:    http://10.0.0.144:55555/v1/flowers
   
-      return fetch('http://10.8.173.153:55555/v1/flowers')
+      return fetch('http://10.0.0.144:55555/v1/flowers')
       .then((res) => res.json())
       .then((resJson) => {
         that.setState({
@@ -62,9 +63,20 @@ export default class ProgressScreen extends React.Component {
     render(){
       console.log(this.state.flowers);
       return(
-        <View>
-        <Text style = {styles.head}> Bloom </Text>
-        <Text style = {styles.desc}> Your Progress</Text>
+        <View style = {{backgroundColor: '#2c3e50',}}>
+
+
+          <Text style={styles.space}>   </Text>
+          <Text style={styles.space}>   </Text>
+
+          <Text style = {styles.paragraph}> Bloom </Text>
+          <Text style = {styles.whiteText}> Total Focus Time: ???  </Text>
+          <Text style = {styles.whiteText}> Number of Sessions: ???  </Text>
+          <Text style = {styles.whiteText}> other statistics: ???  </Text>
+
+          <Text style={styles.space}>   </Text>
+          <Text style = {styles.head}> -  Sessions </Text>
+
         <List>
           <FlatList
           data = {this.state.flowers}
