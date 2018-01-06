@@ -10,7 +10,6 @@ import TimerScreen from './TimerScreen';
 import LoginScreen from './LoginScreen';
 import {styles} from './Styles';
 
-
 //----------------------------------------------------
 // HomeScreen
 // Contains Timer screen and progress screen split into
