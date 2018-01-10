@@ -129,6 +129,7 @@ export default class TimerScreen extends React.Component {
   _endSession = (success) => {
     
     this.setState({inSession: false},() => {
+      console.log('in EndSession');
       let flowerVariety = 'Rose';
       let minutesFocused = 35;
       let sessionLength = 35;
@@ -248,10 +249,10 @@ export default class TimerScreen extends React.Component {
         timerField = <TimerDraft
         inSession  = {this.props.inSession}
 
-        targetTime = {60}
+        //targetTime = {this.stat}
         // WHAT IT SHOULD BE: remainingSeconds  --> not working tho for reason stated below    vvv
 
-        //targetTime = {this.state.remainingSeconds} // <--------- SLIGHT ISSUE HERE, THIS IS SET TO 20*60 SECONDS 
+        targetTime = {this.state.remainingSeconds} // <--------- SLIGHT ISSUE HERE, THIS IS SET TO 20*60 SECONDS 
         endSession = {this._endSession}              //            INITIALLY AND DOES NOT UPDATE TO SELECTED TIME
         sendSMS    = {this._sendSMS}/>;              //            BY THE SLIDER, GOTTA UPDATE IT AS SLIDER CHANGES
       }
@@ -397,6 +398,15 @@ export class TimerDraft extends React.Component {
     //before this component exits the screen, clear the timer
     componentWillUnmount(){
       clearInterval(this.interval);
+    }
+
+    //whenever state in parent changes, props are updated
+    componentWillReceiveProps(nextProps){
+      this.setState({targetTime: nextProps.targetTime}, () => {
+        console.log("New target time: ");
+        console.log(this.state.targetTime);
+      })
+
     }
   
     render() {
