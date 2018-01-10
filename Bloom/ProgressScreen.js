@@ -88,9 +88,9 @@ export default class ProgressScreen extends React.Component {
           <Text style={styles.space}>   </Text>
 
           <Text style = {styles.paragraph}> Bloom </Text>
-          <Text style = {styles.whiteText}> Total Focus Time: ???  </Text>
-          <Text style = {styles.whiteText}> Number of Sessions: ???  </Text>
-          <Text style = {styles.whiteText}> other statistics: ???  </Text>
+          <Text style = {styles.whiteText}> Total Focus Time: 150 minutes  </Text>
+          <Text style = {styles.whiteText}> Number of Sessions: 9  </Text>
+          <Text style = {styles.whiteText}> Favourite buddy: Hilal  </Text>
 
           <Text style={styles.space}>   </Text>
           <Text style = {styles.head}> -  Sessions </Text>
