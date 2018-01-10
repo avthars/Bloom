@@ -135,8 +135,9 @@ export default class TimerScreen extends React.Component {
     this.setState({inSession: false},() => {
       console.log('in EndSession');
       let flowerVariety = 'Rose';
-      let minutesFocused = elapsedTime;
-      let sessionLength = this.state.sessionLength;
+      //convert seconds to minutes
+      let minutesFocused = Math.ceil(elapsedTime/60);
+      let sessionLength = Math.ceil(this.state.sessionLength/60);
       console.log("SESSION RECORDED: " );
       console.log("INITIAL LENGTH" + sessionLength);
       console.log("TIME FOCUSED:" + minutesFocused);
@@ -257,7 +258,7 @@ export default class TimerScreen extends React.Component {
     render(){
       //conditionally render time elapsed in session
       let timerField = null;
-      if (true){
+      if (this.state.inSession){
         timerField = <TimerDraft
         inSession  = {this.state.inSession}
         targetTime = {this.state.sessionLength} 
@@ -444,7 +445,7 @@ export class TimerDraft extends React.Component {
   
     render() {
       return (
-        <Text style = {{fontSize: 30, color: 'white'}}> {this.state.elapsedTime} seconds focused</Text>
+        <Text style = {{fontSize: 30, color: 'white'}}></Text>
       );
     }
   }
