@@ -146,13 +146,7 @@ export default class LoginScreen extends React.Component {
             <Text style = {{color: 'white', textAlign: 'center', fontSize: 20, }}> Login with Facebook </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => navigate('Home')}
-            >
-            <Text style = {{color: 'white', textAlign: 'center', fontSize: 16, }}> skip </Text>
-          </TouchableOpacity>
         </View>
       );
     }
   }
-  

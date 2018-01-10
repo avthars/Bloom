@@ -174,7 +174,7 @@ export default class TimerScreen extends React.Component {
   // CIRCULAR TIMER FUNCTIONS |
   // -------------------------|
 
-    handleStart() {
+    handleStart() {  
       this.refs.circularProgress.performLinearAnimation(100, this.state.remainingSeconds * 1000); 
       var ival = setInterval(() => {
         if ((this.state.remainingSeconds > 0) && this.state.countDown) {
@@ -189,7 +189,7 @@ export default class TimerScreen extends React.Component {
           remainingSeconds : prevState.remainingSeconds, 
           countDown : true,
           interval : ival,
-          tint : "#2ecc71",
+          //tint : "#2ecc71",
           backgroundColor : "#3d5875",
         };
       });
@@ -290,27 +290,6 @@ export default class TimerScreen extends React.Component {
           Bloom
         </Text>
 
-        <AnimatedCircularProgress
-          ref='circularProgress'
-          size={240}
-          width={25}
-          fill={this.state.fill}
-          tintColor={this.state.tint}
-          backgroundColor="#3d5875"
-          >
-          {
-            (fill) => (
-              <Text style={styles.timer}> 
-                {this.formatRemainingSeconds(this.state.remainingSeconds)} 
-              </Text>
-            )
-          }
-        </AnimatedCircularProgress>
-
-        <Text style={styles.space}>   </Text>
-        <Text style={styles.space}>   </Text>
-        <Text style={styles.space}>   </Text>
-
         <TextInput                              //  <--- NEEDS FIXING (SAVE INPUT AND USE IT)
           style = {styles.numberInput}
           placeholder = "Partner's Name"
@@ -334,6 +313,28 @@ export default class TimerScreen extends React.Component {
           onEndEditing = {this._onEndInput}
           value = {this.state.accBuddyNumber}
         />
+
+        <Text style={styles.space}>   </Text>
+        <Text style={styles.space}>   </Text>
+
+        <AnimatedCircularProgress
+          ref='circularProgress'
+          size={240}
+          width={25}
+          fill={this.state.fill}
+          tintColor={this.state.tint}
+          backgroundColor="#3d5875"
+          >
+          {
+            (fill) => (
+              <Text style={styles.timer}> 
+                {this.formatRemainingSeconds(this.state.remainingSeconds)} 
+              </Text>
+            )
+          }
+        </AnimatedCircularProgress>
+
+        <Text style={styles.space}>   </Text>
         <Text style={styles.space}>   </Text>
 
         <Slider
@@ -353,10 +354,6 @@ export default class TimerScreen extends React.Component {
         inSession = {this.state.inSession}
         />
   
-        <Text style = {styles.whiteText}> In Session = {this.state.inSession ? 'ACTIVE':'INACTIVE'} </Text>
-        {timerField}
-        {victoryMsg}
-        {failureMsg}
         </View>
         );
     }

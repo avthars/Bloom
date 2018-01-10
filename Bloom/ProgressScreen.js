@@ -101,7 +101,6 @@ export default class ProgressScreen extends React.Component {
             <ListItem
             title = {item.variety}
             subtitle = {item.complete ? 'Complete': 'Fail'}
-            
             />
           )}
           keyExtractor = {item => item._id}

@@ -59,6 +59,7 @@ export const styles = StyleSheet.create({
       //marginRight: 20, // needs some tweaking
       alignItems: "center",
       justifyContent: "center",
+      //backgroundColor: '#000',    <-- black
       backgroundColor: '#2c3e50',
     },
     paragraph: {
