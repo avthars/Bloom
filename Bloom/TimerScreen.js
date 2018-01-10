@@ -26,12 +26,13 @@ export default class TimerScreen extends React.Component {
     super(props);
     this.state =
     { 
-      appState: AppState.currentState,
+      //appState: AppState.currentState,
       inSession: false,
       accBuddyName: '',
       accBuddyNumber: '',
       sessionSuccess: false,
       sessionFailure: false,
+      sessionLength: 0,
       //get the following from the state in LoginScreen
       fbname: 'Facebook Name',
       fbid: 'dbid1',
@@ -78,13 +79,14 @@ export default class TimerScreen extends React.Component {
       console.log(this.state);
     });
   
-      AppState.addEventListener('change', this._handleAppStateChange);
+      //AppState.addEventListener('change', this._handleAppStateChange);
     }
   
     componentWillUnmount() {
-      AppState.removeEventListener('change', this._handleAppStateChange);
+      //AppState.removeEventListener('change', this._handleAppStateChange);
     }
   
+    /*
     _handleAppStateChange = (nextAppState) => {
     //transition from active to background iff session is active
     if ((this.state.appState.match(/active/) && nextAppState === 'background') && this.state.inSession)
@@ -105,6 +107,7 @@ export default class TimerScreen extends React.Component {
   
     this.setState({appState: nextAppState});
   }
+  */
   
   //functions to start/end session when START/STOP button is pressed
   _handleSession = (pressed) => {
@@ -126,13 +129,16 @@ export default class TimerScreen extends React.Component {
   //function that ends a session currently in progress, 
   //then sends session info to the server
   //extend input params to include minutes focused in a session as well
-  _endSession = (success) => {
+  _endSession = (success, elapsedTime) => {
     
     this.setState({inSession: false},() => {
       console.log('in EndSession');
       let flowerVariety = 'Rose';
-      let minutesFocused = 35;
-      let sessionLength = 35;
+      let minutesFocused = elapsedTime;
+      let sessionLength = this.state.sessionLength;
+      console.log("SESSION RECORDED: " );
+      console.log("INITIAL LENGTH" + sessionLength);
+      console.log("TIME FOCUSED:" + minutesFocused);
       putFlower(success, 
         this.state.fbname, this.state.fbid,
         this.state.accBuddyName, this.state.accBuddyNumber,
@@ -150,7 +156,6 @@ export default class TimerScreen extends React.Component {
     }
   }
   
-  
   //Capture and save phone number associated with session
   _onTextChange = (number) => {
     //console.log(task);
@@ -159,11 +164,9 @@ export default class TimerScreen extends React.Component {
   //After user has finished editing input, take final state
   _onEndInput = () => {
     //save the accountability buddy's number
-    console.log("Acc buddy phone number:")
+    console.log("Acc buddy phone number:");
     console.log(this.state.accBuddyNumber);
     this.setState({accBuddyName: 'Felix'}, () => {console.log('accBuddyName:' + this.state.accBuddyName);});
-    //send entered number to server
-    //this._sendPhoneNum(this.state.accBuddyNumber, 'Felix');
   }
   
 
@@ -247,14 +250,14 @@ export default class TimerScreen extends React.Component {
       let timerField = null;
       if (this.state.inSession){
         timerField = <TimerDraft
-        inSession  = {this.props.inSession}
+        inSession  = {this.state.inSession}
 
         //targetTime = {this.stat}
         // WHAT IT SHOULD BE: remainingSeconds  --> not working tho for reason stated below    vvv
 
-        targetTime = {this.state.remainingSeconds} // <--------- SLIGHT ISSUE HERE, THIS IS SET TO 20*60 SECONDS 
-        endSession = {this._endSession}              //            INITIALLY AND DOES NOT UPDATE TO SELECTED TIME
-        sendSMS    = {this._sendSMS}/>;              //            BY THE SLIDER, GOTTA UPDATE IT AS SLIDER CHANGES
+        targetTime = {this.state.sessionLength} 
+        endSession = {this._endSession}              
+        sendSMS    = {this._sendSMS}/>;
       }
       //conditionally render session success message
       let victoryMsg = null;
@@ -342,7 +345,7 @@ export default class TimerScreen extends React.Component {
           step={60}
           value={this.state.sliderValue}
           //onValueChange={value => this.setState({ sliderValue : value })}
-          onValueChange={value => this.setState({ remainingSeconds : value })}
+          onValueChange={value => this.setState({ sessionLength: value, remainingSeconds: value,})}
         />
 
         <SessionButton
@@ -368,8 +371,10 @@ export class TimerDraft extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
+        appState: AppState.currentState,
+        inSession: this.props.inSession,
         targetTime: this.props.targetTime,
-        elapsedTime: 0
+        elapsedTime: 0,
       };
   
       //count up to target time + then stop
@@ -384,8 +389,7 @@ export class TimerDraft extends React.Component {
          //stop if reached target and session is active
          else {
           //call session complete function
-          //this.props.sessionComplete(true)
-          this.props.endSession(true);
+          this.props.endSession(true, previousState.elapsedTime);
           //this.props.sendSMS(true);
           return {elapsedTime: this.state.targetTime};
          }
@@ -395,17 +399,39 @@ export class TimerDraft extends React.Component {
   
     }
   
+
+    componentDidMount(){
+      AppState.addEventListener('change', this._handleAppStateChange);
+    }
+
     //before this component exits the screen, clear the timer
     componentWillUnmount(){
       clearInterval(this.interval);
+      AppState.removeEventListener('change', this._handleAppStateChange);
+    }
+
+    _handleAppStateChange = (nextAppState) => {
+      //transition from active to background iff session is active
+      if ((this.state.appState.match(/active/) && nextAppState === 'background') && this.state.inSession)
+      {
+        console.log('App is in the background! User is distracted :( ')
+        this.props.endSession(false, this.state.elapsedTime);
+    
+      }
+      //transition from background/inactive to active iff session is active
+      else if ((this.state.appState.match(/background|inactive/) && nextAppState === 'active')&& this.state.inSession)
+      {
+        console.log('App is in the foreground. User is focusing :) ')
+        //user came back to foreground, do nothing
+      }
+    
+      this.setState({appState: nextAppState});
     }
 
     //whenever state in parent changes, props are updated
     componentWillReceiveProps(nextProps){
-      this.setState({targetTime: nextProps.targetTime}, () => {
-        console.log("New target time: ");
-        console.log(this.state.targetTime);
-      })
+      this.setState({targetTime: nextProps.targetTime, inSession: nextProps.inSession}, () => {
+      });
 
     }
   
