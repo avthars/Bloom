@@ -67,7 +67,7 @@ export default class LoginScreen extends React.Component {
           //only display this after state has updated
           Alert.alert(
           'Logged in!',
-          `Hi ${profile.name}! Your userID is ${userid}`,
+          `Hi ${profile.name}!`,
           [
             {text: 'Logout', onPress: () => console.log('Logout Requested')},
             {text: 'Next', onPress: () => navigate('Home', {fbid: this.state.fbid, fbname: this.state.fbname, userid: this.state.userid, fbpic: this.state.fbpic})},
