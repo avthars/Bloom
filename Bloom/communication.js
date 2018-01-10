@@ -3,7 +3,6 @@
 //
 // functions to handle app-server communication
 //------------------------------------------------------------------------------
-
 import { Platform } from 'react-native';
 
 var MSEC_IN_MIN = 60000.0;
