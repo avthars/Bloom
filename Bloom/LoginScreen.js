@@ -83,7 +83,7 @@ export default class LoginScreen extends React.Component {
     //------------------------------------------------------
     async registerUserAndGetUserID(fbname, fbid, fbProfilePicURL) {
       try {
-        let API_ROOT = 'http://10.0.0.144:55555/v1';
+        let API_ROOT = 'https://safe-forest-34189.herokuapp.com/v1';
         let response = await fetch(API_ROOT+'/users/register', {
           method: 'POST',
           headers: {
