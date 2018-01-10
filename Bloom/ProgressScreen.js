@@ -80,7 +80,8 @@ export default class ProgressScreen extends React.Component {
     render(){
       console.log(this.state.flowers);
       return(
-        <View style = {{backgroundColor: '#2c3e50',}}>
+        //<View style = {{backgroundColor: '#2c3e50',}}>
+        <View style = {{backgroundColor: 'black',}}>
 
 
           <Text style={styles.space}>   </Text>
