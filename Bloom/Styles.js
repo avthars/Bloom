@@ -35,7 +35,8 @@ export const styles = StyleSheet.create({
       height: 50,
       width: 250,
       borderWidth: 0,
-      backgroundColor: '#2ecc71',
+      // backgroundColor: '#2ecc71',
+      backgroundColor: 'rgba(142,68,173,0.7)'
       borderRadius: 5,
       justifyContent: 'center',
       alignItems: 'center',
@@ -67,7 +68,8 @@ export const styles = StyleSheet.create({
       fontSize: 40,
       fontWeight: 'bold',
       textAlign: 'center',
-      color: '#27ae60',
+      // color: '#27ae60',
+      color: 'rgba(142,68,173,0.7)',
     },
     space: {
       margin: 5,
@@ -89,7 +91,8 @@ export const styles = StyleSheet.create({
       width: 250,
       borderWidth: 0,
       color: '#fff',
-      backgroundColor: '#d35400',
+      // backgroundColor: '#d35400',
+      backgroundColor: 'rgba(190,144,212, 0.8)'
       borderRadius: 5,
       justifyContent: 'center',
       alignItems: 'center',
