@@ -26,22 +26,36 @@ export default class ProgressScreen extends React.Component {
   
     //when component has mounted, get the flowers
     componentDidMount(){
-      var that = this;
-      //get all flowers from database
-      //shefali: http://10.8.68.109:55555/v1/flowers
-      //avthar: http://10.8.173.153:55555/v1/flowers
-      //hilal:    http://10.0.0.144:55555/v1/flowers
-  
-      return fetch('http://10.0.0.144:55555/v1/flowers')
-      .then((res) => res.json())
-      .then((resJson) => {
-        that.setState({
-          flowers: resJson.flowers,
+    //check what was passed in navigation
+     const stuff = {fbid, fbname, userid, fbpic} = this.props.navigation.state.params;
+     var that = this;
+     //get all flowers from database
+    var API = 'https://safe-forest-34189.herokuapp.com/v1/flowers/query'; 
+    return fetch(API, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fbid: stuff.fbid,
         })
       })
-      .catch((err) => console.log(err));
+      .then((res) => res.json())
+      .then((resJson) => {
+        console.log(resJson);
+        console.log("Flowers on server");
+        this.setState({flowers: resJson}, () => {
+          console.log("State of flowers:");
+          console.log(this.state.flowers);
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+
     }
-  
+
     //individual item in the list
     renderItemFunc = ({item}) => {
       <ListItem
@@ -49,13 +63,16 @@ export default class ProgressScreen extends React.Component {
       subtitle = {item.complete ? 'Complete': 'Fail'}
       />
     }
-  
+    
+    
     static navigationOptions = {
       /*title: 'Bloom',*/
       headerTintColor: 'black',
       BackgroundColor: 'black',
       header: null
     };
+
+  
   
   
   //TO do: figure out how to style stuff in this list properly

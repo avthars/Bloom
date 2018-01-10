@@ -14,7 +14,7 @@ var MSEC_IN_MIN = 60000.0;
 //change when server is migrated to clouds
 //shefali
 // API_ROOT = 'http://10.8.68.109:55555/v1/'
-API_ROOT = 'http://10.8.173.153:55555/v1/'
+API_ROOT = 'https://safe-forest-34189.herokuapp.com/v1'
 
 function checkStatus(res) {
   if (res.status >= 200 && res.status < 300) {
@@ -30,7 +30,8 @@ function checkStatus(res) {
 // will also send notifiation to buddyNumber sent in request
 export const putFlower =(complete, userName, fbid, buddyName, buddyNumber,variety, endTime, minutes, sessionLength, userID) => 
 {
-  var API = API_ROOT + "flowers";
+  console.log('in putFlower');
+  var API = API_ROOT + "/flowers";
   fetch(API, {
     method: 'POST',
     headers: {
@@ -52,7 +53,7 @@ export const putFlower =(complete, userName, fbid, buddyName, buddyNumber,variet
   })
   .then((res) => res.json())
   .then((resJson) => {
-    //console.log(resJson);
+    console.log(resJson);
     console.log("Message back from server!");
     console.log(resJson.message);
   })
@@ -64,7 +65,7 @@ export const putFlower =(complete, userName, fbid, buddyName, buddyNumber,variet
 // registers a user with the database
 //not used, see registerUserAndGetUserId function in Login page
 export const registerUser = (username) => {
-  var API = API_ROOT + "users";
+  var API = API_ROOT + "/users";
 
   fetch(API, {
     method: 'POST',
@@ -87,7 +88,7 @@ export const registerUser = (username) => {
 
 // returns all flowers in JSON
 export const getFlowers = () => {
-  var API = API_ROOT + "flowers";
+  var API = API_ROOT + "/flowers";
 
   fetch(API)
   .then((res) => res.json())
