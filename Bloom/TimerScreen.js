@@ -130,6 +130,7 @@ export default class TimerScreen extends React.Component {
   //then sends session info to the server
   //extend input params to include minutes focused in a session as well
   _endSession = (success, elapsedTime) => {
+    console.log("IN END SESSION ");
     
     this.setState({inSession: false},() => {
       console.log('in EndSession');
@@ -157,16 +158,24 @@ export default class TimerScreen extends React.Component {
   }
   
   //Capture and save phone number associated with session
-  _onTextChange = (number) => {
-    //console.log(task);
+  _onTextChangeNumber = (number) => {
     this.setState({accBuddyNumber: number});
   }
+
+  _onTextChangeName = (name) => {
+    this.setState({accBuddyName: name});
+  }
   //After user has finished editing input, take final state
-  _onEndInput = () => {
+  _onEndInputNumber = () => {
     //save the accountability buddy's number
-    console.log("Acc buddy phone number:");
+    console.log("Acc buddy number:");
     console.log(this.state.accBuddyNumber);
-    this.setState({accBuddyName: 'Felix'}, () => {console.log('accBuddyName:' + this.state.accBuddyName);});
+  }
+
+  _onEndInputName = () => {
+    //save the accountability buddy's number
+    console.log("Acc buddy Name:");
+    console.log(this.state.accBuddyName);
   }
   
 
@@ -248,13 +257,9 @@ export default class TimerScreen extends React.Component {
     render(){
       //conditionally render time elapsed in session
       let timerField = null;
-      if (this.state.inSession){
+      if (true){
         timerField = <TimerDraft
         inSession  = {this.state.inSession}
-
-        //targetTime = {this.stat}
-        // WHAT IT SHOULD BE: remainingSeconds  --> not working tho for reason stated below    vvv
-
         targetTime = {this.state.sessionLength} 
         endSession = {this._endSession}              
         sendSMS    = {this._sendSMS}/>;
@@ -290,12 +295,13 @@ export default class TimerScreen extends React.Component {
           Bloom
         </Text>
 
-        <TextInput                              //  <--- NEEDS FIXING (SAVE INPUT AND USE IT)
+        <TextInput                             
           style = {styles.numberInput}
           placeholder = "Partner's Name"
           placeholderTextColor = 'lightgray'
           returnKeyType = 'done'
-          onEndEditing = {this._onEndInput}
+          onChangeText = {this._onTextChangeName}
+          onEndEditing = {this._onEndInputName}
           value = {this.state.accBuddyName}
         />
 
@@ -309,8 +315,8 @@ export default class TimerScreen extends React.Component {
           returnKeyType = 'done'
           keyboardType = 'number-pad'
           maxLength = {10}
-          onChangeText = {this._onTextChange}
-          onEndEditing = {this._onEndInput}
+          onChangeText = {this._onTextChangeNumber}
+          onEndEditing = {this._onEndInputNumber}
           value = {this.state.accBuddyNumber}
         />
 
@@ -353,6 +359,8 @@ export default class TimerScreen extends React.Component {
         handleSession = {this._handleSession}
         inSession = {this.state.inSession}
         />
+
+        {timerField}
   
         </View>
         );
@@ -428,6 +436,8 @@ export class TimerDraft extends React.Component {
     //whenever state in parent changes, props are updated
     componentWillReceiveProps(nextProps){
       this.setState({targetTime: nextProps.targetTime, inSession: nextProps.inSession}, () => {
+        console.log("Timer Draft State When Receive Props:");
+        console.log(this.state);
       });
 
     }
