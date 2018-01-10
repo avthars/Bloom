@@ -36,7 +36,7 @@ export const styles = StyleSheet.create({
       width: 250,
       borderWidth: 0,
       // backgroundColor: '#2ecc71',
-      backgroundColor: 'rgba(142,68,173,0.7)'
+      backgroundColor: 'rgba(142,68,173,0.7)',
       borderRadius: 5,
       justifyContent: 'center',
       alignItems: 'center',
@@ -92,7 +92,7 @@ export const styles = StyleSheet.create({
       borderWidth: 0,
       color: '#fff',
       // backgroundColor: '#d35400',
-      backgroundColor: 'rgba(190,144,212, 0.8)'
+      backgroundColor: 'rgba(190,144,212, 0.8)',
       borderRadius: 5,
       justifyContent: 'center',
       alignItems: 'center',
