@@ -108,14 +108,16 @@ export default class TimerScreen extends React.Component {
   //extend input params to include minutes focused in a session as well
   _endSession = (success, elapsedTime) => {
     console.log("ENDING SESSION");
+    //pick a random flower 
+    var flowerVariety = 'Rose';
+    //convert seconds to minutes
+    var minutesFocused = Math.ceil(elapsedTime/60);
+    var sessionLength = Math.ceil(this.state.sessionLength/60);
     
+    //record session in DB
     this.setState({inSession: false},() => {
       console.log('in EndSession');
-      //pick a random flower 
-      let flowerVariety = 'Rose';
-      //convert seconds to minutes
-      let minutesFocused = Math.ceil(elapsedTime/60);
-      let sessionLength = Math.ceil(this.state.sessionLength/60);
+      
       console.log("SESSION RECORDED" );
       console.log("INITIAL LENGTH" + sessionLength);
       console.log("TIME FOCUSED:" + minutesFocused);
@@ -124,7 +126,30 @@ export default class TimerScreen extends React.Component {
         this.state.accBuddyName, this.state.accBuddyNumber,
         flowerVariety, Date.now(), 
         minutesFocused, sessionLength ,this.state.userid);
-    });
+    
+/* `Goal: ${sessionLength} minutes`,
+      `You focused for: ${minutesFocused} minutes`,
+      `Flower unlocked: ${flowerVariety}`, */
+      
+        //Display an alert giving feedback to user after session has ended
+    Alert.alert(
+      //Title
+      'Session Results',
+      //Msg
+      `Session: ${success ? 'Success!' : 'Failed :('}!
+       Goal: ${sessionLength} minutes 
+       You focused for: ${minutesFocused} minutes
+       Flower unlocked: ${flowerVariety}`,
+      //Buttons
+      [
+        {text: 'OK', onPress: () => console.log('Ask me later pressed')},
+      ],
+      //Options
+      { cancelable: false },
+    );
+   
+   
+      });
   
     //change state to display message on the screen
     if (success){
