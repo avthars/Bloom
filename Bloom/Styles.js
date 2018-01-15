@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
       fontSize: 30,
       textAlign: 'center',
       color: '#fff',
-      marginTop: 20,
+      marginTop: 5,
       justifyContent: 'space-between',
     },
     
@@ -36,6 +36,12 @@ export const styles = StyleSheet.create({
       textAlign: 'center',
       color: '#fff',
       justifyContent: 'space-between',
+    },
+
+    image_view: {
+      alignItems: 'center',
+      marginTop: 10,
+      marginBottom: 10,
     },
   
   

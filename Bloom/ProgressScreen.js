@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import {Text, View, Image, Video, TextInput, Button, TouchableOpacity, AppState, Slider,
   Platform, AppRegistry, Alert, FlatList} from 'react-native';
-import {List, ListItem} from 'react-native-elements';
+import {List, ListItem, Avatar} from 'react-native-elements';
 //functions to interface with server and DB
 import {putFlower, getFlowers} from './communication.js';
 import {styles} from './Styles';
@@ -83,14 +83,6 @@ export default class ProgressScreen extends React.Component {
 
     }
 
-    //individual item in the list
-    renderItemFunc = ({item}) => {
-      <ListItem
-      title = {item.variety}
-      subtitle = {item.complete ? 'Complete': 'Fail'}
-      />
-    }
-    
     
     static navigationOptions = {
       /*title: 'Bloom',*/
@@ -109,21 +101,23 @@ export default class ProgressScreen extends React.Component {
       let totalSessions = this.state.totalSessions;
       let totalMinutes = this.state.totalMins;
       let fbname = this.state.fbname;
+      let userpic = this.state.fbpic;
 
       return(
         //<View style = {{backgroundColor: '#2c3e50',}}>
         <View style = {{backgroundColor: 'black',}}>
-
-
-          <Text style={styles.space}>   </Text>
-          <Text style={styles.space}>   </Text>
-
+         <View style={styles.image_view}>
+          <Avatar
+            medium
+            rounded
+            source={{uri: userpic}}
+            onPress={() => console.log("Works!")}
+            activeOpacity={0.7} />
           <Text style = {styles.subhead}> {fbname}'s Flower Garden </Text>
           <Text style = {styles.whiteText}> Number of Sessions: {totalSessions}  </Text>
           <Text style = {styles.whiteText}> Total Minutes Focused: {totalMinutes}  </Text>
-
-
-          <Text style={styles.space}>   </Text>
+        </View>
+        
           <Text style = {styles.head}> History </Text>
 
         <List>
@@ -131,8 +125,12 @@ export default class ProgressScreen extends React.Component {
           data = {this.state.flowers}
           renderItem = {({item}) => (
             <ListItem
-            title = {item.variety}
+            roundAvatar
+            avatar = {{uri: item.complete ? 'https://d30y9cdsu7xlg0.cloudfront.net/png/2267-200.png':'https://d30y9cdsu7xlg0.cloudfront.net/png/13906-200.png'}}
+            title = {item.minutes +'/'+ item.sessionLength+ ' mins'}
             subtitle = {item.complete ? 'Complete': 'Fail'}
+            rightTitle = {'Buddy: ' + item.buddyName}
+            hideChevron = {true}
             />
           )}
           keyExtractor = {item => item._id}
