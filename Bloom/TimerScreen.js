@@ -130,16 +130,15 @@ export default class TimerScreen extends React.Component {
 /* `Goal: ${sessionLength} minutes`,
       `You focused for: ${minutesFocused} minutes`,
       `Flower unlocked: ${flowerVariety}`, */
-      
+
         //Display an alert giving feedback to user after session has ended
     Alert.alert(
       //Title
-      'Session Results',
+      `Session: ${success ? 'Success!' : 'Failed :('}!`,
       //Msg
-      `Session: ${success ? 'Success!' : 'Failed :('}!
-       Goal: ${sessionLength} minutes 
-       You focused for: ${minutesFocused} minutes
-       Flower unlocked: ${flowerVariety}`,
+      `Goal: ${sessionLength} mins
+      You focused for: ${minutesFocused} mins
+      Flower unlocked: ${flowerVariety}`,
       //Buttons
       [
         {text: 'OK', onPress: () => console.log('Ask me later pressed')},
