@@ -91,8 +91,10 @@ export default class TimerScreen extends React.Component {
   _handleSession = (pressed) => {
     if (pressed) {
       //start session
-      this.setState({sessionSuccess: false, inSession: true});
-      this.handleStart();
+      this.setState({sessionSuccess: false, inSession: true}, () => {
+        this.handleStart();
+      });
+      
     }
     else{
       this.setState({inSession: false,});
@@ -126,12 +128,16 @@ export default class TimerScreen extends React.Component {
   
     //change state to display message on the screen
     if (success){
-      this.setState({sessionSuccess: true});
-      this.handleStop();
+      this.setState({sessionSuccess: true}, () => {
+        this.handleStop();
+      });
+      
     }
     else {
-      this.setState({sessionFailure: true});
-      this.handleStop();
+      this.setState({sessionFailure: true}, () => {
+        this.handleStop();
+      });
+      
     }
   }
   
@@ -183,9 +189,11 @@ export default class TimerScreen extends React.Component {
       });
     }
 
+    //maybe make a success/ failure version
     handleStop() {
       this.refs.circularProgress.performLinearAnimation(100, 0); 
       clearInterval(this.state.interval);
+      //figure out whether session was a success or failure before putting tint
       this.setState(prevState => {
         return {
           remainingSeconds : prevState.remainingSeconds,
@@ -360,6 +368,7 @@ export class TimerDraft extends React.Component {
         inSession: this.props.inSession,
         targetTime: this.props.targetTime,
         elapsedTime: 0,
+        //interval: null,
       };
   
       //count up to target time + then stop
@@ -390,7 +399,10 @@ export class TimerDraft extends React.Component {
 
     //before this component exits the screen, clear the timer
     componentWillUnmount(){
-      clearInterval(this.interval);
+      if (this.state.inSession){
+        clearInterval(this.interval);
+        console.log("Interval cleared");
+      }
       AppState.removeEventListener('change', this._handleAppStateChange);
     }
 
@@ -398,27 +410,49 @@ export class TimerDraft extends React.Component {
       //transition from active to background iff session is active
       if ((this.state.appState.match(/active/) && nextAppState === 'background') && this.state.inSession)
       {
-        console.log('App is in the background! User is distracted :( ')
-        this.props.endSession(false, this.state.elapsedTime);
-    
+        console.log('App is in the background! User is distracted :( ');
+        this.setState({appState: nextAppState}, () => {this.props.endSession(false, this.state.elapsedTime);});
       }
       //transition from background/inactive to active iff session is active
-      else if ((this.state.appState.match(/background|inactive/) && nextAppState === 'active')&& this.state.inSession)
+     /* else if ((this.state.appState.match(/background|inactive/) && nextAppState === 'active')&& this.state.inSession)
       {
         console.log('App is in the foreground. User is focusing :) ')
         //user came back to foreground, do nothing
-      }
+      } */
     
-      this.setState({appState: nextAppState});
+      //this.setState({appState: nextAppState});
     }
 
     //whenever state in parent changes, props are updated
     componentWillReceiveProps(nextProps){
+      //upon receiving new props from parent, check if user is inSession
       this.setState({targetTime: nextProps.targetTime, inSession: nextProps.inSession}, () => {
+        
+      /*  if (this.state.inSession){
+         
+          //set an interval to time user
+          var ival = setInterval(() => {
+            this.setState(previousState =>
+            {
+            //continue if not yet reached target and session is active
+             if ((previousState.elapsedTime != this.props.targetTime)){
+              return {elapsedTime: previousState.elapsedTime +1};
+             }
+             //stop if reached target and session is active
+             else {
+              //call session complete function
+              this.props.endSession(true, previousState.elapsedTime);
+              return {elapsedTime: this.state.targetTime};
+             }
+            });
+          }, 1000);
+          //set this as state
+          this.setState({interval: ival,});
+        } */
+
         //console.log("Timer Draft State When Receive Props:");
         //console.log(this.state);
       });
-
     }
   
     render() {
