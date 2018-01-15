@@ -79,50 +79,25 @@ export default class TimerScreen extends React.Component {
       console.log(this.state);
     });
   
-      //AppState.addEventListener('change', this._handleAppStateChange);
     }
   
     componentWillUnmount() {
-      //AppState.removeEventListener('change', this._handleAppStateChange);
+      //reset intervals
+      this.handleReset();
     }
   
-    /*
-    _handleAppStateChange = (nextAppState) => {
-    //transition from active to background iff session is active
-    if ((this.state.appState.match(/active/) && nextAppState === 'background') && this.state.inSession)
-    {
-      console.log('App is in the background! User is distracted :( ')
-      //call end session function --> send SMS
-      //ENABLE FOR DEMO
-      //this._sendSMS(false);
-      this._endSession(false);
-  
-    }
-    //transition from background/inactive to active iff session is active
-    else if ((this.state.appState.match(/background|inactive/) && nextAppState === 'active')&& this.state.inSession)
-    {
-      console.log('App is in the foreground. User is focusing :) ')
-      //user came back to foreground, do nothing
-    }
-  
-    this.setState({appState: nextAppState});
-  }
-  */
   
   //functions to start/end session when START/STOP button is pressed
   _handleSession = (pressed) => {
     if (pressed) {
-  
-      //start new session and create new session object
-  
       //start session
       this.setState({sessionSuccess: false, inSession: true});
-      this.handleStart()
+      this.handleStart();
     }
     else{
       this.setState({inSession: false,});
-      this.handleStop()
-      //end a current session and don't send feedback to user
+      this.handleStop();
+      //end a current session and don't send any feedback
     }
   }
   
@@ -130,15 +105,16 @@ export default class TimerScreen extends React.Component {
   //then sends session info to the server
   //extend input params to include minutes focused in a session as well
   _endSession = (success, elapsedTime) => {
-    console.log("IN END SESSION ");
+    console.log("ENDING SESSION");
     
     this.setState({inSession: false},() => {
       console.log('in EndSession');
+      //pick a random flower 
       let flowerVariety = 'Rose';
       //convert seconds to minutes
       let minutesFocused = Math.ceil(elapsedTime/60);
       let sessionLength = Math.ceil(this.state.sessionLength/60);
-      console.log("SESSION RECORDED: " );
+      console.log("SESSION RECORDED" );
       console.log("INITIAL LENGTH" + sessionLength);
       console.log("TIME FOCUSED:" + minutesFocused);
       putFlower(success, 
@@ -151,10 +127,11 @@ export default class TimerScreen extends React.Component {
     //change state to display message on the screen
     if (success){
       this.setState({sessionSuccess: true});
+      this.handleStop();
     }
     else {
       this.setState({sessionFailure: true});
-      this.handleStop()
+      this.handleStop();
     }
   }
   
@@ -163,16 +140,17 @@ export default class TimerScreen extends React.Component {
     this.setState({accBuddyNumber: number});
   }
 
+  //Capture and save phone number associated with session
   _onTextChangeName = (name) => {
     this.setState({accBuddyName: name});
   }
-  //After user has finished editing input, take final state
+  //After user has finished editing buddy number, take final state
   _onEndInputNumber = () => {
     //save the accountability buddy's number
     console.log("Acc buddy number:");
     console.log(this.state.accBuddyNumber);
   }
-
+  //After user has finished editing buddy name, take final state
   _onEndInputName = () => {
     //save the accountability buddy's number
     console.log("Acc buddy Name:");
@@ -371,6 +349,7 @@ export default class TimerScreen extends React.Component {
 //----------------------------------------------------
 // Timer Component
 // Child component of TimerScreen
+// Responsible for checking if user is focused or not
 //----------------------------------------------------
 // Initial version of Timer
 export class TimerDraft extends React.Component {
@@ -396,7 +375,6 @@ export class TimerDraft extends React.Component {
          else {
           //call session complete function
           this.props.endSession(true, previousState.elapsedTime);
-          //this.props.sendSMS(true);
           return {elapsedTime: this.state.targetTime};
          }
         });
@@ -437,8 +415,8 @@ export class TimerDraft extends React.Component {
     //whenever state in parent changes, props are updated
     componentWillReceiveProps(nextProps){
       this.setState({targetTime: nextProps.targetTime, inSession: nextProps.inSession}, () => {
-        console.log("Timer Draft State When Receive Props:");
-        console.log(this.state);
+        //console.log("Timer Draft State When Receive Props:");
+        //console.log(this.state);
       });
 
     }
@@ -450,7 +428,9 @@ export class TimerDraft extends React.Component {
     }
   }
   
+  //----------------------------------------------------
   //Button which starts and stops a session
+  //----------------------------------------------------
   export class SessionButton extends React.Component {
     state = {
       toggle : this.props.inSession
