@@ -21,6 +21,12 @@ export default class ProgressScreen extends React.Component {
       super(props);
       this.state = {
         flowers: [],
+        totalMins: 0,
+        totalSessions: 0,
+        fbname: null,
+        fbpic: null,
+        userid: null,
+        fbid: null,
       };
     }
   
@@ -43,11 +49,32 @@ export default class ProgressScreen extends React.Component {
       })
       .then((res) => res.json())
       .then((resJson) => {
-        console.log(resJson);
-        console.log("Flowers on server");
-        this.setState({flowers: resJson}, () => {
+        //console.log(resJson);
+        //console.log("Flowers on server");
+        this.setState({flowers: resJson, 
+          fbid: stuff.fbid, 
+          userid: stuff.userid,
+          fbname: stuff.fbname,
+          fbpic: stuff.fbpic},() => {
+
           console.log("State of flowers:");
           console.log(this.state.flowers);
+
+          //Loop thru all the flowers and add up the total number of flowers and the total minutes focused
+          var fetchedFlowers = this.state.flowers;
+          var sumMins = 0;
+          fetchedFlowers.forEach(flower => {
+            
+            //sum up stats
+            sumMins += flower.minutes;
+          });
+
+          //set state
+          this.setState({totalMins: sumMins, totalSessions: fetchedFlowers.length}, () => {
+            console.log("Total Sessions: " + fetchedFlowers.length);
+            console.log("Total Minutes Focused: " + this.state.totalMins);
+          });
+
         });
       })
       .catch((err) => {
@@ -78,7 +105,11 @@ export default class ProgressScreen extends React.Component {
   //TO do: figure out how to style stuff in this list properly
   // Display stats of user above session history
     render(){
-      console.log(this.state.flowers);
+      
+      let totalSessions = this.state.totalSessions;
+      let totalMinutes = this.state.totalMins;
+      let fbname = this.state.fbname;
+
       return(
         //<View style = {{backgroundColor: '#2c3e50',}}>
         <View style = {{backgroundColor: 'black',}}>
@@ -87,13 +118,13 @@ export default class ProgressScreen extends React.Component {
           <Text style={styles.space}>   </Text>
           <Text style={styles.space}>   </Text>
 
-          <Text style = {styles.paragraph}> Bloom </Text>
-          <Text style = {styles.whiteText}> Total Focus Time: 150 minutes  </Text>
-          <Text style = {styles.whiteText}> Number of Sessions: 9  </Text>
-          <Text style = {styles.whiteText}> Favourite buddy: Hilal  </Text>
+          <Text style = {styles.subhead}> {fbname}'s Flower Garden </Text>
+          <Text style = {styles.whiteText}> Number of Sessions: {totalSessions}  </Text>
+          <Text style = {styles.whiteText}> Total Minutes Focused: {totalMinutes}  </Text>
+
 
           <Text style={styles.space}>   </Text>
-          <Text style = {styles.head}> -  Sessions </Text>
+          <Text style = {styles.head}> History </Text>
 
         <List>
           <FlatList

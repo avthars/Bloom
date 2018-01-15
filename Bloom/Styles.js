@@ -16,6 +16,15 @@ export const styles = StyleSheet.create({
       marginTop: 20,
       justifyContent: 'space-between',
     },
+
+    subhead: {
+      fontSize: 30,
+      textAlign: 'center',
+      color: '#fff',
+      marginTop: 20,
+      justifyContent: 'space-between',
+    },
+    
     //container: {
     //  flex: 1,
     //  backgroundColor: '#000',
@@ -69,7 +78,7 @@ export const styles = StyleSheet.create({
       fontWeight: 'bold',
       textAlign: 'center',
       // color: '#27ae60',
-      color: 'rgba(142,68,173,0.7)',
+      color: 'white',
     },
     space: {
       margin: 5,
