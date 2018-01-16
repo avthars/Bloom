@@ -61,6 +61,19 @@ export default class ProgressScreen extends React.Component {
         this.setState({flowers: resJson.reverse(), refreshing: false},() => {
           console.log("State after refresh:");
           console.log(this.state);
+
+          var fetchedFlowers = this.state.flowers;
+          var sumMins = 0;
+          fetchedFlowers.forEach(flower => {    
+          //sum up stats
+          sumMins += flower.minutes;
+          });
+          
+        //set state
+        this.setState({totalMins: sumMins, totalSessions: fetchedFlowers.length}, () => {
+              console.log("Updated sessions: " + fetchedFlowers.length);
+              console.log("Updated minutes: " + this.state.totalMins);
+            });
         });
       })
       .catch((err) => {
