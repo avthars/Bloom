@@ -97,9 +97,7 @@ export default class TimerScreen extends React.Component {
       
     }
     else{
-      this.setState({inSession: false,});
-      this.handleStop();
-      //end a current session and don't send any feedback
+      this.setState({inSession: false,}, () => {this.handleStop();});
     }
   }
   
@@ -109,7 +107,13 @@ export default class TimerScreen extends React.Component {
   _endSession = (success, elapsedTime) => {
     console.log("ENDING SESSION");
     //pick a random flower 
-    var flowerVariety = 'Rose';
+    
+    var flowers = ['Rose', 'Daisy', 'Sunflower', 'Iris', 'Dahlia', 'Tulip', 'Jasmine', 
+  'Marigold', 'Lilac', 'Daffodil', 'Lotus', 'Lily'];
+    
+  //pick a random flower
+    var flowerVariety = flowers[Math.floor(Math.random()*flowers.length)];
+
     //convert seconds to minutes
     var minutesFocused = Math.ceil(elapsedTime/60);
     var sessionLength = Math.ceil(this.state.sessionLength/60);
@@ -134,14 +138,14 @@ export default class TimerScreen extends React.Component {
         //Display an alert giving feedback to user after session has ended
     Alert.alert(
       //Title
-      `Session: ${success ? 'Success!' : 'Failed :('}!`,
+      `Session: ${success ? 'Success :)' : 'Failed :('}`,
       //Msg
       `Goal: ${sessionLength} mins
       You focused for: ${minutesFocused} mins
       Flower unlocked: ${flowerVariety}`,
       //Buttons
       [
-        {text: 'OK', onPress: () => console.log('Ask me later pressed')},
+        {text: 'OK', onPress: () => console.log('OK pressed')},
       ],
       //Options
       { cancelable: false },
