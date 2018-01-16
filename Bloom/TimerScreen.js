@@ -91,7 +91,7 @@ export default class TimerScreen extends React.Component {
   _handleSession = (pressed) => {
     if (pressed) {
       //start session
-      this.setState({sessionSuccess: false, inSession: true}, () => {
+      this.setState({sessionSuccess: false, sessionFailure:false, inSession: true}, () => {
         this.handleStart();
       });
       
@@ -156,13 +156,13 @@ export default class TimerScreen extends React.Component {
   
     //change state to display message on the screen
     if (success){
-      this.setState({sessionSuccess: true}, () => {
+      this.setState({sessionSuccess: true, sessionFailure: false}, () => {
         this.handleStop();
       });
       
     }
     else {
-      this.setState({sessionFailure: true}, () => {
+      this.setState({sessionFailure: true, sessionSuccess:false}, () => {
         this.handleStop();
       });
       
@@ -283,8 +283,7 @@ export default class TimerScreen extends React.Component {
       let victoryMsg = null;
   
       if(this.state.sessionSuccess){
-        //HILAL: Change styles on this to make look big and nice
-        victoryMsg = <Text style = {styles.whiteText}> Session Complete :) </Text>;
+        victoryMsg = <Text style = {styles.subhead}> Session Complete :) </Text>;
       }
       else {
         victoryMsg = null;
@@ -292,8 +291,7 @@ export default class TimerScreen extends React.Component {
       //conditionally render failure message
       let failureMsg = null;
       if(this.state.sessionFailure){
-        //HILAL: Change styles on this to make look big and nice
-        failureMsg = <Text style = {styles.whiteText}> Session Failed :( </Text>;
+        failureMsg = <Text style = {styles.subhead}> Session Failed :( </Text>;
       }
       else{
         failureMsg = null;
@@ -304,11 +302,12 @@ export default class TimerScreen extends React.Component {
   
       return (
         <View style = {styles.container}>
-  
-
         <Text style={styles.paragraph}>
           Bloom
         </Text>
+
+        {failureMsg}
+        {victoryMsg}
 
         <TextInput                             
           style = {styles.numberInput}
@@ -319,10 +318,7 @@ export default class TimerScreen extends React.Component {
           onEndEditing = {this._onEndInputName}
           value = {this.state.accBuddyName}
         />
-
         <Text style={styles.space}>   </Text>
-
-
         <TextInput
           style = {styles.numberInput}
           placeholder = "Phone Number"
@@ -337,6 +333,7 @@ export default class TimerScreen extends React.Component {
 
         <Text style={styles.space}>   </Text>
         <Text style={styles.space}>   </Text>
+        
 
         <AnimatedCircularProgress
           ref='circularProgress'

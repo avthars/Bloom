@@ -79,7 +79,7 @@ export const styles = StyleSheet.create({
       // backgroundColor: '#2c3e50',
     },
     paragraph: {
-      margin: 24,
+      margin: 10,
       fontSize: 40,
       fontWeight: 'bold',
       textAlign: 'center',
