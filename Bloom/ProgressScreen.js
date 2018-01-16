@@ -126,7 +126,7 @@ export default class ProgressScreen extends React.Component {
           renderItem = {({item}) => (
             <ListItem
             roundAvatar
-            avatar = {{uri: item.complete ? 'https://d30y9cdsu7xlg0.cloudfront.net/png/2267-200.png':'https://d30y9cdsu7xlg0.cloudfront.net/png/13906-200.png'}}
+            avatar = {{uri: item.complete ? 'http://www.newdesignfile.com/postpic/2009/07/flower-icon_86893.png':'https://d30y9cdsu7xlg0.cloudfront.net/png/13906-200.png'}}
             title = {item.minutes +'/'+ item.sessionLength+ ' mins'}
             subtitle = {item.complete ? 'Complete': 'Fail'}
             rightTitle = {'Buddy: ' + item.buddyName}
