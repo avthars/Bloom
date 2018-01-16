@@ -27,9 +27,49 @@ export default class ProgressScreen extends React.Component {
         fbpic: null,
         userid: null,
         fbid: null,
+        refreshing: false,
       };
     }
   
+
+    handleRefresh = () => {
+      this.setState({refreshing: true}, () => {
+        this.makeServerRequest();
+      });
+    };
+
+
+    makeServerRequest(){
+      //check what was passed in navigation
+     const stuff = {fbid, fbname, userid, fbpic} = this.props.navigation.state.params;
+     var that = this;
+     //get all flowers from database
+    var API = 'https://safe-forest-34189.herokuapp.com/v1/flowers/query'; 
+    return fetch(API, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fbid: stuff.fbid,
+        })
+      })
+      .then((res) => res.json())
+      .then((resJson) => {
+        //update flowers in state
+        this.setState({flowers: resJson.reverse(), refreshing: false},() => {
+          console.log("State after refresh:");
+          console.log(this.state);
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+
+    }
+
+
     //when component has mounted, get the flowers
     componentDidMount(){
     //check what was passed in navigation
@@ -142,6 +182,8 @@ export default class ProgressScreen extends React.Component {
             />
           )}
           keyExtractor = {item => item._id}
+          refreshing= {this.state.refreshing}
+          onRefresh={this.handleRefresh} 
           />
         </List>
         </View>
