@@ -51,7 +51,10 @@ export default class ProgressScreen extends React.Component {
       .then((resJson) => {
         //console.log(resJson);
         //console.log("Flowers on server");
-        this.setState({flowers: resJson, 
+
+        //sort response by date
+
+        this.setState({flowers: resJson.reverse(), 
           fbid: stuff.fbid, 
           userid: stuff.userid,
           fbname: stuff.fbname,
@@ -62,6 +65,11 @@ export default class ProgressScreen extends React.Component {
 
           //Loop thru all the flowers and add up the total number of flowers and the total minutes focused
           var fetchedFlowers = this.state.flowers;
+
+          //sort flowers by date
+          //fetchedFlowers.sort((a,b) => {return a.endTime.getTime() - b.endTime.getTime()});
+          //fetchedFlowers.sort(function(a, b){return a - b});
+
           var sumMins = 0;
           fetchedFlowers.forEach(flower => {
             
