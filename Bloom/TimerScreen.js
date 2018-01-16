@@ -215,7 +215,7 @@ export default class TimerScreen extends React.Component {
 
     //maybe make a success/ failure version
     handleStop() {
-      this.refs.circularProgress.performLinearAnimation(100, 0); 
+      // this.refs.circularProgress.performLinearAnimation(100, 0); 
       clearInterval(this.state.interval);
       //figure out whether session was a success or failure before putting tint
       this.setState(prevState => {
@@ -223,7 +223,7 @@ export default class TimerScreen extends React.Component {
           remainingSeconds : prevState.remainingSeconds,
           countDown : false,
           interval : null,
-          tint : "#e74c3c",
+          // tint : "#e74c3c",
           fill : 0,
         };
       });
