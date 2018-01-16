@@ -1,6 +1,6 @@
 //----------------------------------------------------
 // LoginScreen.js
-// Code LoginScreen - the first screen that user
+// Code for LoginScreen - the first screen that user
 // interacts with in the app
 //----------------------------------------------------
 import React, { Component } from 'react';

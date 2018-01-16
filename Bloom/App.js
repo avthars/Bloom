@@ -3,7 +3,6 @@
 // Main file which structures screens and how to 
 // navigate between them
 //----------------------------------------------------
-
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, Video, TextInput, Button, TouchableOpacity, AppState, Slider,
   Platform, AppRegistry, Alert, FlatList} from 'react-native';
