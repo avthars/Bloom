@@ -1,5 +1,6 @@
 # Bloom
-COS 333 Project by Avthar Sewrathan, Hilal Ahmad, Shefali Nayak and Sarah Varghese
+COS 333 Project by Avthar Sewrathan, Hilal Ahmad, Shefali Nayak and Sarah Varghese at Princeton University Fall 2017
+
 Bloom is a mobile app that helps people build the habit of focus through social accountability.
 
 ## Tech Stack: 
